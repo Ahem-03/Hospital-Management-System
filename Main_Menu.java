@@ -1,13 +1,12 @@
 import javax.swing.*;
-
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.*;
 
-public class Main_Menu extends JFrame implements ActionListener{
+public class Main_Menu extends JFrame  {
     JPanel p1;
     JLabel lh;
     JButton  baddp, baddD, baptmnt;
+ 
     public Main_Menu()
     {
         //initializing
@@ -48,9 +47,20 @@ public class Main_Menu extends JFrame implements ActionListener{
 
 
 // action listener
-        baddp.addActionListener(this);
-        baddD.addActionListener(this);
-        baptmnt.addActionListener(this);
+        baddp.addActionListener( new ActionListener() {
+            
+            // add patient page will open
+            public void actionPerformed(ActionEvent e ){
+                 new ViewPatient();
+                setVisible(true);
+                  setSize(1050,800);
+                  setLocationRelativeTo(null);
+                  setVisible(false);
+            }
+        });
+    
+        // baddD.addActionListener(this);
+        // baptmnt.addActionListener(this);
 
 
         // framing 
@@ -58,26 +68,7 @@ public class Main_Menu extends JFrame implements ActionListener{
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
-    public  void actionPerformed(ActionEvent ae)
-    {
-        if (ae.getSource()==baddp) {     // add patient page will open
-            AddPatient ap = new AddPatient();
-            ap.setVisible(true);
-            ap.setSize(1050,800);
-            ap.setLocationRelativeTo(null);
-            this.setVisible(false);
-        }
-        
-        else if (ae.getSource()==baddD) {     // add doctor page will open
-            AddDoctor ad = new AddDoctor();
-            ad.setVisible(true);
-            ad.setSize(1050,800);
-            ad.setLocationRelativeTo(null);
-            this.setVisible(false);
-        }
-     
-    }
+    
     public static void main(String[] args)
     {
         SwingUtilities.invokeLater(() -> new Main_Menu());
