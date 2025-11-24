@@ -75,7 +75,35 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnRefresh.setForeground(Color.white);
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnRefresh);
-        btnRefresh.addActionListener(this);
+        btnRefresh.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e ){
+
+
+///////////////////////////////////////////////////////////////////
+                String an =searchField.getText("");
+                         if (searchField.setText("").isEmpty()) {
+             model.setRowCount(0);
+               try{
+        String query_2  = "select * from patients";
+        rs = stmt.executeQuery(query_2);
+        
+        while (rs.next()) {
+            Object[] row ={
+                rs.getString("patient_id"),
+                rs.getString("name"),
+                rs.getString("age"),
+                rs.getString("gender"),
+                rs.getString("disease"),
+                rs.getString("contact")
+            };
+            model.addRow(row); 
+        }
+    }catch(Exception ee){
+        System.out.println("problem"+ee);
+    }
+        }
+            }
+        });
 
         btnBack = new JButton("Back");
         btnBack.setBounds(40, 330, 200, 35);
@@ -83,7 +111,15 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnBack.setForeground(Color.white);
         btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnBack);
-        btnBack.addActionListener(e  -> { new Main_Menu();});  // actionPerformed(ActionEvent e) Invoked when an action occurs.
+        btnBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e ){
+                 new Main_Menu();
+                  setVisible(true);
+                  setSize(1050,820);
+                  setLocationRelativeTo(null);
+                  ViewPatient.this.setVisible(false);
+            }
+        });  // actionPerformed(ActionEvent e) Invoked when an action occurs.
 
         btnAdd  = new JButton("Add patient");           
         btnAdd.setBounds(40, 280, 200, 35);
@@ -97,8 +133,6 @@ public class ViewPatient extends JFrame implements ActionListener{
         // setTitle("🏥 Add New Patient");
         addPanel.setSize(1050, 820);
         getContentPane().setBackground(new Color(240, 250, 255));
-
-
 
         }); 
 
@@ -190,29 +224,9 @@ public class ViewPatient extends JFrame implements ActionListener{
 
    // ========== form here we are adding the button event =========
    public void actionPerformed(ActionEvent e){   
-        if (e.getSource()==btnRefresh) {
-             model.setRowCount(0);
-               try{
-        String query_2  = "select * from patients";
-        rs = stmt.executeQuery(query_2);
-        
-        while (rs.next()) {
-            Object[] row ={
-                rs.getString("patient_id"),
-                rs.getString("name"),
-                rs.getString("age"),
-                rs.getString("gender"),
-                rs.getString("disease"),
-                rs.getString("contact")
-            };
-            model.addRow(row); 
-        }
-    }catch(Exception ee){
-        System.out.println("problem"+ee);
-    }
-        }
+
         // =================== searching button ============ 
-        else if (e.getSource()==btnSearch) {
+         if (e.getSource()==btnSearch) {
              model.setRowCount(0);
             String id = searchField.getText(); 
             try {

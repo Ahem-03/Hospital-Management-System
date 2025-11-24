@@ -48,14 +48,13 @@ public class Main_Menu extends JFrame  {
 
 // action listener
         baddp.addActionListener( new ActionListener() {
-            
             // add patient page will open
             public void actionPerformed(ActionEvent e ){
                  new ViewPatient();
-                setVisible(true);
+                  setVisible(true);
                   setSize(1050,800);
                   setLocationRelativeTo(null);
-                  setVisible(false);
+                  Main_Menu.this.setVisible(false);
             }
         });
     
