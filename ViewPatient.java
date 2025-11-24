@@ -75,36 +75,12 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnRefresh.setForeground(Color.white);
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnRefresh);
-        btnRefresh.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent e ){
-
-
-///////////////////////////////////////////////////////////////////
-                String an =searchField.getText("");
-                         if (searchField.setText("").isEmpty()) {
-             model.setRowCount(0);
-               try{
-        String query_2  = "select * from patients";
-        rs = stmt.executeQuery(query_2);
-        
-        while (rs.next()) {
-            Object[] row ={
-                rs.getString("patient_id"),
-                rs.getString("name"),
-                rs.getString("age"),
-                rs.getString("gender"),
-                rs.getString("disease"),
-                rs.getString("contact")
-            };
-            model.addRow(row); 
-        }
-    }catch(Exception ee){
-        System.out.println("problem"+ee);
-    }
-        }
-            }
-        });
-
+        btnRefresh.addActionListener( this);
+            btnRefresh.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e ){
+                    loadPatientData();
+                }
+            });  // actionPerformed(ActionEvent e) Invoked when an action occurs.
         btnBack = new JButton("Back");
         btnBack.setBounds(40, 330, 200, 35);
         btnBack.setBackground(new Color(255, 87, 87));
@@ -127,13 +103,13 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnAdd.setForeground(Color.white);
         btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnAdd);
-
-       
         btnAdd.addActionListener(e -> {
         // setTitle("🏥 Add New Patient");
-        addPanel.setSize(1050, 820);
-        getContentPane().setBackground(new Color(240, 250, 255));
-
+            AddPatient ad =new AddPatient();
+            ad.setVisible(true);
+            ad.setSize(1050,820);
+            ad.setLocationRelativeTo(null);
+            ViewPatient.this.setVisible(false);
         }); 
 
         // ==== RIGHT PANEL ====
@@ -230,7 +206,7 @@ public class ViewPatient extends JFrame implements ActionListener{
              model.setRowCount(0);
             String id = searchField.getText(); 
             try {
-                String query_2 = "select * from patients where patient_id = '"+id+"' and name = '"+id+"'";
+                String query_2 = "select * from patients where patient_id = '"+id+"' or name = '"+id+"'";
                 System.out.println("query is running...");
                 rs = stmt.executeQuery(query_2);
                 if (rs.next()) {
@@ -249,9 +225,6 @@ public class ViewPatient extends JFrame implements ActionListener{
             }
         }
    }
-
-
-
 
 
    // ====================================== AddPatient record ===============================================//
