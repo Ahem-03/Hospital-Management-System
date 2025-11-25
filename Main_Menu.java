@@ -58,6 +58,14 @@ public class Main_Menu extends JFrame {
             }
         });
 
+        baddD.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new ViewDoctor();
+                setLocationRelativeTo(null);
+                Main_Menu.this.setVisible(false);
+            }
+        });
+
         blogout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -255,7 +255,7 @@ public class ViewDoctor extends JFrame {
         try {
             con = DriverManager.getConnection(url, user, user_password);
             stmt = con.createStatement();
-            String query = "SELECT * FROM doctor_db WHERE doctor_id LIKE %" + searchTerm + "% OR name LIKE '%" + searchTerm + "%'";
+            String query = "SELECT * FROM doctor_db WHERE doctor_id LIKE '" + searchTerm + "' OR name LIKE '%" + searchTerm + "%'";
             rs = stmt.executeQuery(query);
 
             while (rs.next()) {
