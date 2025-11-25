@@ -106,11 +106,11 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnAdd.addActionListener(new ActionListener() {
             @Override
         public void actionPerformed(ActionEvent e){
-            new AddPatient();
-            setLocationRelativeTo(null);
+           AddPatient ap = new AddPatient();
+            ap.setLocationRelativeTo(null);
             ViewPatient.this.setVisible(false);
-        }
-        }); 
+        }  
+        });   // this is the action performed method for add patient 
 
         // ==== RIGHT PANEL ====
         rightPanel = new JPanel();
