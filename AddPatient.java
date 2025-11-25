@@ -138,7 +138,12 @@ public class AddPatient extends JFrame implements ActionListener {
         btnBack_2.setBackground(new Color(255, 87, 87));
         btnBack_2.setForeground(Color.white);
         btnBack_2.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        btnBack_2.addActionListener(e -> dispose());
+        btnBack_2.addActionListener(new ViewPatient(){
+            public void actionPerformed(ActionEvent e) {
+                setLocationRelativeTo(null);
+                AddPatient.this.setVisible(false);
+            }
+        });
         add(btnBack_2);
 
         setVisible(true);
@@ -168,7 +173,7 @@ public class AddPatient extends JFrame implements ActionListener {
                 con = DriverManager.getConnection(url, user, user_password);
                 stmt = con.createStatement();
                 System.out.println("database is connected....");
-                String query = "insert into patients(patient_id ,name, age, gender, disease, contact) values ('"
+                String query = "insert into patients(ewpatient_id ,name, age, gender, disease, contact) values ('"
                         + patient_id + "','" + name + "','" + age + "','" + gender + "','" + disease + "','" + contact
                         + "' )";
 

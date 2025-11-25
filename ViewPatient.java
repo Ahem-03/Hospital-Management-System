@@ -103,13 +103,13 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnAdd.setForeground(Color.white);
         btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnAdd);
-        btnAdd.addActionListener(e -> {
-        // setTitle("🏥 Add New Patient");
-            AddPatient ad =new AddPatient();
-            ad.setVisible(true);
-            ad.setSize(1050,820);
-            ad.setLocationRelativeTo(null);
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+        public void actionPerformed(ActionEvent e){
+            new AddPatient();
+            setLocationRelativeTo(null);
             ViewPatient.this.setVisible(false);
+        }
         }); 
 
         // ==== RIGHT PANEL ====
