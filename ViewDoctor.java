@@ -156,6 +156,7 @@ public class ViewDoctor extends JFrame {
                 }
                 String doctorId = model.getValueAt(selectedRow, 0).toString();
                 JOptionPane.showMessageDialog(ViewDoctor.this, "Update functionality for Doctor ID: " + doctorId, "Update", JOptionPane.INFORMATION_MESSAGE);
+                updateDoctor(doctorId);
             }
         });
 
@@ -280,6 +281,22 @@ public class ViewDoctor extends JFrame {
         }
     }
 
+    //==================updating the table =====================
+
+    private void updateDoctor(String doctorId) {
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            int selectedRow = doctorTable.getSelectedRow();
+            String doctorId_2 = model.getValueAt(selectedRow, 0).toString();
+            String name  = model.getValueAt(selectedRow, 1).toString();
+            String query = "update doctor_db set name = '"+name+"' where doctor_id = '"+doctorId_2+"'";
+            stmt.executeUpdate(query);
+            JOptionPane.showMessageDialog(this, "Doctor update successfully.", "UPDATE", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
     private void deleteDoctor(String doctorId) {
         try {
             con = DriverManager.getConnection(url, user, user_password);
