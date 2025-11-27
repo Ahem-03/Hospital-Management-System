@@ -200,11 +200,11 @@ public class AddDoctor extends JFrame implements ActionListener {
             return;
         }
         if (!email.isEmpty()) {
-            String regex = "^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$";
-            if (!Pattern.matches(regex, email)) {
-                JOptionPane.showMessageDialog(this, "Enter a valid email.", "Validation", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+           // String regex = "^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$";
+            // if (!Pattern.matches(regex, email)) {
+            //     JOptionPane.showMessageDialog(this, "Enter a valid email.", "Validation", JOptionPane.WARNING_MESSAGE);
+              return;
+            // }
         }
 
         // simulate save: show summary modal
@@ -221,12 +221,15 @@ public class AddDoctor extends JFrame implements ActionListener {
         sb.append("Address: ").append(address).append("\n");
 
         JOptionPane.showMessageDialog(this, sb.toString(), "Saved", JOptionPane.INFORMATION_MESSAGE);
-        clearForm();
+        
+        // this will auto generate the doctor id 
+            tfdoctor_Id.setText(ViewDoctor.generateNextPatientId(tfdoctor_Id));
 
         String doctor_Id = tfdoctor_Id.getText().trim();
         String name_2 = tfname.getText().trim();
-        Object gender_2 = cbGender.getSelectedItem();
+        String gender_2 = (String) cbGender.getSelectedItem();
         String specialization_2 = tfspecialization.getText().trim();
+        String qualification_2 = tfqualification.getText().trim();
         String experience_2 = String.valueOf(Integer.parseInt(tfexperience.getText().trim()));
         String phone_2 = tfphone.getText().trim();
         String email_2 = tfemail.getText().trim();
@@ -235,17 +238,31 @@ public class AddDoctor extends JFrame implements ActionListener {
         
         try {
             con = DriverManager.getConnection(url, user, user_password);
-            con.createStatement();
+
             System.out.println("dtabase is connected ");
-            String query = "insert into doctor(doctor_id, name, gender, specialization, experience, phone, email, availability, address) values ('"+doctor_Id+"','"+name_2+"', '"+gender_2+"', '"+specialization_2+"', '"+experience_2+"','"+phone_2+"','"+email_2+"','"+availability_2+"','"+address_2+"',)";
+            String query = "insert into doctor_db(doctor_id, name, gender, specialization, experience, phone, email, availability, address) values ('"+doctor_Id+"','"+name_2+"', '"+gender_2+"', '"+specialization_2+"', '"+qualification_2+"','"+experience_2+"','"+phone_2+"','"+email_2+"','"+availability_2+"','"+address_2+"')";
 
-            stmt.executeUpdate(query);
-            
-            // this will auto generate the doctor id 
-            tfdoctor_Id.setText(ViewDoctor.generateNextPatientId(tfdoctor_Id));
+            PreparedStatement pst = con.prepareStatement(query);
 
-                JOptionPane.showMessageDialog(this, "record inserted ");
+        pst.setString(1, doctor_Id);
+        pst.setString(2, name_2);
+        pst.setString(3, gender_2);
+        pst.setString(4, specialization_2);
+        pst.setString(5, qualification_2);
+        pst.setString(6, experience_2);
+        pst.setString(7, phone_2);
+        pst.setString(8, email_2);
+        pst.setString(9, address_2);
+        pst.setString(10, availability_2);
+
+           int rows = pst.executeUpdate();
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this, "Record inserted.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Insert failed.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception e) {
+            System.out.println("there is a error ");
             JOptionPane.showMessageDialog(this, JOptionPane.INFORMATION_MESSAGE);
         }
     }
