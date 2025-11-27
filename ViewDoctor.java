@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -21,6 +23,9 @@ public class ViewDoctor extends JFrame {
     public static Statement stmt;
     public static ResultSet rs;
 
+    /**
+     * 
+     */
     public ViewDoctor() {
         setTitle("🏥 View Doctor Details");
         setSize(1050, 820);
@@ -116,7 +121,13 @@ public class ViewDoctor extends JFrame {
         model.addColumn("Address");
         model.addColumn("Availability");
 
-        doctorTable = new JTable(model);
+        // create JTable once with ID column read-only
+        doctorTable = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column != 0;   // Doctor ID not editable
+            }
+        };
         doctorTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         doctorTable.setRowHeight(25);
         tableScroll = new JScrollPane(doctorTable);
@@ -146,17 +157,21 @@ public class ViewDoctor extends JFrame {
             }
         });
 
-        btnUpdate.addActionListener(new ActionListener() {
+        // update DB when model changes (only handle UPDATE events)
+        model.addTableModelListener(new TableModelListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = doctorTable.getSelectedRow();
-                if (selectedRow == -1) {
-                    JOptionPane.showMessageDialog(ViewDoctor.this, "Please select a doctor to update.", "Warning", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                String doctorId = model.getValueAt(selectedRow, 0).toString();
-                JOptionPane.showMessageDialog(ViewDoctor.this, "Update functionality for Doctor ID: " + doctorId, "Update", JOptionPane.INFORMATION_MESSAGE);
-                updateDoctor(doctorId);
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() != TableModelEvent.UPDATE) return;
+                int row = e.getFirstRow();
+                int col = e.getColumn();
+                if (row < 0 || col < 0) return;
+
+                String columnName = model.getColumnName(col);
+                Object newValue = model.getValueAt(row, col);
+                Object idObj = model.getValueAt(row, 0);
+                if (idObj == null) return;
+                String doctorId = idObj.toString();
+                updateDoctor(doctorId, columnName, newValue);
             }
         });
 
@@ -283,18 +298,58 @@ public class ViewDoctor extends JFrame {
 
     //==================updating the table =====================
 
-    private void updateDoctor(String doctorId) {
-        try {
-            con = DriverManager.getConnection(url, user, user_password);
-            stmt = con.createStatement();
-            int selectedRow = doctorTable.getSelectedRow();
-            String doctorId_2 = model.getValueAt(selectedRow, 0).toString();
-            String name  = model.getValueAt(selectedRow, 1).toString();
-            String query = "update doctor_db set name = '"+name+"' where doctor_id = '"+doctorId_2+"'";
-            stmt.executeUpdate(query);
-            JOptionPane.showMessageDialog(this, "Doctor update successfully.", "UPDATE", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception e) {
-            // TODO: handle exception
+    private void updateDoctor(String doctorId, String columnName, Object newValue) {
+        // map displayed column names to actual DB column names
+        String dbCol;
+        switch (columnName) {
+            case "doctor_Id": // never editable
+                return;
+            case "name":
+                dbCol = "name";
+                break;
+            case "gender":
+                dbCol = "gender";
+                break;
+            case "specialization":
+                dbCol = "specialization";
+                break;
+            case "qualification":
+                dbCol = "qualification";
+                break;
+            case "experience":
+                dbCol = "experience";
+                break;
+            case "phone":
+                dbCol = "phone";
+                break;
+            case "address":
+                dbCol = "address";
+                break;
+            case "availability":
+                dbCol = "availability";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Cannot update column: " + columnName, "Update error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        String sql = "UPDATE doctor_db SET " + dbCol + " = '"+newValue+"' WHERE doctor_id = '"+doctorId+"'";
+        JOptionPane.showMessageDialog(this,"error");
+        try (Connection conn = DriverManager.getConnection(url, user, user_password);
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setObject(1, newValue);
+            pst.setString(2, doctorId);
+            int updated = pst.executeUpdate();
+            if (updated > 0) {
+                // reload the table silently (no dialog on each cell edit)
+                loadDoctorData();
+            } else {
+                JOptionPane.showMessageDialog(this, "No record updated (check doctor_id).", "Update", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Failed to update: " + ex.getMessage(), "Update error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
         }
     }
     private void deleteDoctor(String doctorId) {
