@@ -1,6 +1,5 @@
 import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
@@ -206,7 +205,7 @@ public class ViewDoctor extends JFrame {
 
      //=========== this will auto generate the id ============
 
-    public static String generateNextPatientId(JTextField txtdoctor_Id){
+    public static String generateNextPatientId(JTextField tfdoctor_Id){
         String nextId = "P101";
         String query = "select doctor_id from doctor_id ORDER BY doctor_id DESC LIMIT 1";
         try {
