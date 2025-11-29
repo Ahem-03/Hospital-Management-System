@@ -205,9 +205,9 @@ public class ViewDoctor extends JFrame {
 
      //=========== this will auto generate the id ============
 
-    public static String generateNextPatientId(JTextField tfdoctor_Id){
+    public static String generateNextDoctorId(JTextField tfdoctor_Id){
         String nextId = "D101";
-        String query = "select doctor_id from doctor_db ORDER BY doctor_id DESC LIMIT 1";
+        String query = "select Doctor_id from doctor_db ORDER BY Doctor_id DESC LIMIT 1";
         try {
             con = DriverManager.getConnection(url, user, user_password);
         stmt = con.createStatement();
@@ -220,9 +220,10 @@ public class ViewDoctor extends JFrame {
                 int numericPart = Integer.parseInt(lastId.substring(1));
                 // Increment and format
                 nextId = "D" + (numericPart + 1);
+                return nextId;
         }
         } catch (Exception e) {
-            System.out.println(" patient id problem"+ e);
+            System.out.println(" Doctor id problem"+ e);
         }
         //return query;
         return nextId;
