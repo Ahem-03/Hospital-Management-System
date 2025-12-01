@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class FixAppointmentUI2 extends JFrame {
     // Left panel components (keeps same layout/fields as your previous left panel)
@@ -13,6 +14,14 @@ public class FixAppointmentUI2 extends JFrame {
     // Table (no ArrayList) - table model is the single source of truth
     DefaultTableModel model;
     JTable table;
+
+    // Database credentials
+    final String url = "jdbc:mysql://localhost:3306/hospital_db";
+    final String user = "root";
+    final String user_password = "Ahem@0304";
+
+    Connection con;
+    Statement stmt;
 
     public FixAppointmentUI2() {
         setTitle("Fix Appointment - Frontend");
@@ -72,8 +81,8 @@ public class FixAppointmentUI2 extends JFrame {
         ldesc.setBounds(20, 330, 120, 28);
         left.add(ldesc);
         taDesc = new JTextArea();
-        taDesc.setLineWrap(true);
-        taDesc.setWrapStyleWord(true);
+        // taDesc.setLineWrap(true);
+        // taDesc.setWrapStyleWord(true);;
         JScrollPane descScroll = new JScrollPane(taDesc);
         descScroll.setBounds(150, 330, 240, 120);
         left.add(descScroll);
@@ -104,7 +113,7 @@ public class FixAppointmentUI2 extends JFrame {
         btnBack.setForeground(Color.WHITE);
         left.add(btnBack);
 
-        // RIGHT panel - table only (model is sole data store)
+        // RIGHT panel - table only 
         JPanel right = new JPanel(null);
         right.setBackground(new Color(250, 250, 250));
         right.setBounds(420, 0, 630, 820);
@@ -115,7 +124,10 @@ public class FixAppointmentUI2 extends JFrame {
         listLabel.setBounds(20, 20, 400, 30);
         right.add(listLabel);
 
-        model = new DefaultTableModel(new String[]{"ID", "Patient", "Date", "Time", "Phone", "Description"}, 0);
+        String[] data =  new String[]{"ID", "Patient", "Date", "Time", "Phone", "Description"};
+        
+        model = new DefaultTableModel(data,0);
+
         table = new JTable(model);
         table.setRowHeight(24);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -142,13 +154,13 @@ public class FixAppointmentUI2 extends JFrame {
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int r = table.getSelectedRow();
-                if (r == -1) {
+                int row = table.getSelectedRow();
+                if (row == -1) {
                     JOptionPane.showMessageDialog(FixAppointmentUI2.this, "Select a row to delete.", "Delete", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 int confirm = JOptionPane.showConfirmDialog(FixAppointmentUI2.this, "Delete selected appointment?", "Confirm", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) model.removeRow(r);
+                if (confirm == JOptionPane.YES_OPTION) model.removeRow(row);
             }
         });
 
@@ -170,7 +182,7 @@ public class FixAppointmentUI2 extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
+    
     private void saveToTable() {
         String id = tfDoctorId.getText().trim();
         String patient = tfPatientName.getText().trim();
@@ -187,16 +199,27 @@ public class FixAppointmentUI2 extends JFrame {
             JOptionPane.showMessageDialog(this, "Phone must be 10 digits.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        // Add only to table model (no ArrayList, no DB)
-        model.addRow(new Object[]{id, patient, date, time, phone, desc});
-        JOptionPane.showMessageDialog(this, "Appointment added (frontend only).", "Saved", JOptionPane.INFORMATION_MESSAGE);
-        // prepare next id and clear fields
-        tfDoctorId.setText(generateAppointmentId());
-        tfPatientName.setText("");
-        tfDate.setText("");
-        tfTime.setText("");
-        tfPhone.setText("");
-        taDesc.setText("");
+        
+        //======== query for fixing the appointment=====================
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            con.createStatement();
+            String query = "insert into appointments(doctor_id, patient_name, appointment_date, appointment_time, description, phone) values (?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement pst = con.prepareStatement(query);
+            pst.setString(1, id);
+            pst.setString(2, patient);
+            pst.setString(3, date);
+            pst.setString(4, time);
+            pst.setString(4, phone);
+            pst.setString(4, desc);
+
+            JOptionPane.showMessageDialog(this, "Record Inserted..");
+            
+             model.addRow(new String[]{id, patient, date, time, phone, desc});
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void clearForm() {
@@ -207,9 +230,7 @@ public class FixAppointmentUI2 extends JFrame {
         taDesc.setText("");
     }
 
-
-
-    //================= exportCsv=================
+    //================= exportCsv  ==================\\
     private void exportCsvFromModel() {
         int rows = model.getRowCount();
         if (rows == 0) {
@@ -244,6 +265,12 @@ public class FixAppointmentUI2 extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            System.out.println("driver connnected");
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
         SwingUtilities.invokeLater(() -> new FixAppointmentUI2());
     }
 }
