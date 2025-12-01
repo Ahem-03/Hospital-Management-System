@@ -106,9 +106,9 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnAdd.addActionListener(new ActionListener() {
             @Override
         public void actionPerformed(ActionEvent e){
-           AddPatient ap = new AddPatient();
-            ap.setLocationRelativeTo(null);
-            ViewPatient.this.setVisible(false);
+                AddPatient ad = new AddPatient();
+                ad.setLocationRelativeTo(null);
+                ViewPatient.this.setVisible(false);
         }  
         });   // this is the action performed method for add patient 
 
