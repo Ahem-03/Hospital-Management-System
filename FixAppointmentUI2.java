@@ -159,7 +159,7 @@ public class FixAppointmentUI2 extends JFrame {
                 clearForm();
             }
         });
-
+        
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -168,8 +168,11 @@ public class FixAppointmentUI2 extends JFrame {
                     JOptionPane.showMessageDialog(FixAppointmentUI2.this, "Select a row to delete.", "Delete", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
+                String appointmentID = model.getValueAt(row ,0).toString();
                 int confirm = JOptionPane.showConfirmDialog(FixAppointmentUI2.this, "Delete selected appointment?", "Confirm", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) model.removeRow(row);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    rowDelete(appointmentID);
+                }
             }
         });
 
@@ -304,6 +307,23 @@ public class FixAppointmentUI2 extends JFrame {
         tfTime.setText("");
         tfPhone.setText("");
         taDesc.setText("");
+    }
+
+    //===========Delete the row =================
+    public  void rowDelete(String appointmentID){
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            String query = "DELETE FROM appointments WHERE appointment_id = '" + appointmentID + "'";
+            stmt.executeUpdate(query);
+            JOptionPane.showMessageDialog(this, "appointment cancel  successfully.", "Delete", JOptionPane.INFORMATION_MESSAGE);
+            loadAppointmentData();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            JOptionPane.showMessageDialog(this, "Error deleting appointment: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     //================= exportCsv  ==================\\
