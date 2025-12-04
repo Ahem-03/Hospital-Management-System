@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
 
 public class D_dashboard extends JFrame implements ActionListener{
     JPanel p, pApmtJPanel;
@@ -8,6 +10,15 @@ public class D_dashboard extends JFrame implements ActionListener{
     JLabel lblapmt,jdtitle, jdoctorInfo, lblPatientID, lblSymptoms, lblDiagnosis, lblMedicines, lblAdvice, lblNextVisit;
     JTextField txtPatientID, txtSymptoms, txtDiagnosis, txtMedicines, txtAdvice, txtNextVisit;
     JButton btnSave, btnView, btnLogout;
+    
+    // Table for appointments
+    DefaultTableModel model;
+    JTable table;
+    
+    // Database credentials
+    final static String url = "jdbc:mysql://localhost:3306/hospital_db";
+    final static String user = "root";
+    final static String user_password = "Ahem@0304";
 
     public D_dashboard() {
         // Panel 
@@ -25,9 +36,8 @@ public class D_dashboard extends JFrame implements ActionListener{
 
         // appointment label
         lblapmt = new JLabel("Today's Appointment ");
-        lblapmt.setFont(new Font("Seouge", Font.BOLD, 22));
+        lblapmt.setFont(new Font("Segoe UI", Font.BOLD, 22));
         lblapmt.setForeground(Color.GRAY);
-
 
         // Doctor info label
         jdoctorInfo = new JLabel("Dr. Ahem Sharma | Cardiology | Available: 10 AM - 3 PM", JLabel.CENTER);
@@ -96,11 +106,27 @@ public class D_dashboard extends JFrame implements ActionListener{
         p.add(pApmtJPanel);
         pApmtJPanel.add(lblapmt);
 
+        // Create table for appointments
+        model = new DefaultTableModel();
+        model.addColumn("Appointment ID");
+        model.addColumn("Patient Name");
+        model.addColumn("Date");
+        model.addColumn("Time");
+        model.addColumn("Description");
+        model.addColumn("Phone");
+        
+        table = new JTable(model);
+        table.setRowHeight(24);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        JScrollPane tableScroll = new JScrollPane(table);
+
         // setBounds (x, y, w, h)
         // Appointment panel
         pApmtJPanel.setBounds(500,150,500,600);
         //label
         lblapmt.setBounds(10,10,500,35);
+        tableScroll.setBounds(20, 50, 460, 530);
+        pApmtJPanel.add(tableScroll);
         
         jdtitle.setBounds(0, 20, 1050, 40);
         jdoctorInfo.setBounds(0, 70, 1050, 30);
@@ -145,11 +171,35 @@ public class D_dashboard extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent ae){
         if (ae.getSource()==btnView) {
+            loadAppointments();
             pApmtJPanel.setVisible(true);
         }
         else if (ae.getSource()==btnLogout) {
             new Login_Page();
             this.setVisible(false);
+        }
+    }
+
+    private void loadAppointments() {
+        model.setRowCount(0);
+        try (Connection con = DriverManager.getConnection(url, user, user_password);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM appointments")) {
+
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("appointment_id"),
+                    rs.getString("patient_name"),
+                    rs.getString("appointment_date"),
+                    rs.getString("appointment_time"),
+                    rs.getString("description"),
+                    rs.getString("phone")
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error loading appointments: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
