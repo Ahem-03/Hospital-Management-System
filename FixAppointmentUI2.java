@@ -224,9 +224,7 @@ public class FixAppointmentUI2 extends JFrame {
                 con = DriverManager.getConnection(url, user, user_password);
                 String query = "select * from appointments where  appointment_id LIKE ? OR patient_name LIKE ?";
 
-                System.out.println("query is running....");
                 PreparedStatement pst = con.prepareStatement(query);
-                System.out.println("statement is not running.....");
                 pst.setString(1,  search);
                 pst.setString(2,  search);
                 ResultSet rs = pst.executeQuery();
