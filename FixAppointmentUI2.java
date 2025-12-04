@@ -7,9 +7,9 @@ import java.sql.*;
 public class FixAppointmentUI2 extends JFrame {
     // Left panel components (keeps same layout/fields as your previous left panel)
     JLabel lheader, lAppointmet, ldoctorId, lpatientName, ldate, ltime, ldesc, lphone;
-    JTextField tfAppointment, tfDoctorId, tfPatientName, tfDate, tfTime, tfPhone;
+    JTextField tfAppointment, tfDoctorId, tfPatientName, tfDate, tfTime, tfPhone, tfSearch;
     JTextArea taDesc;
-    JButton btnSave, btnClear, btnDelete, btnExport, btnBack;
+    JButton btnSave, btnClear, btnDelete, btnExport, btnBack, btnSearch;
 
     // Table (no ArrayList) - table model is the single source of truth
     DefaultTableModel model;
@@ -90,8 +90,8 @@ public class FixAppointmentUI2 extends JFrame {
         ldesc.setBounds(20, 380, 120, 28);
         left.add(ldesc);
         taDesc = new JTextArea();
-        // taDesc.setLineWrap(true);
-        // taDesc.setWrapStyleWord(true);;
+        taDesc.setLineWrap(true);
+        taDesc.setWrapStyleWord(true);;
         JScrollPane descScroll = new JScrollPane(taDesc);
         descScroll.setBounds(150, 380, 240, 120);
         left.add(descScroll);
@@ -132,6 +132,20 @@ public class FixAppointmentUI2 extends JFrame {
         listLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         listLabel.setBounds(20, 20, 400, 30);
         right.add(listLabel);
+
+        tfSearch = new JTextField();
+         // place search on top-right of the right panel
+        tfSearch.setBounds(380, 20, 140, 28);
+        right.add(tfSearch);
+
+        btnSearch = new JButton("Search");
+        btnSearch.setBounds(530, 20, 80, 28);
+        right.add(btnSearch);
+        btnSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                searchData();
+            }
+        });
 
         String[] data =  new String[]{"Appointment ID", "ID", "Patient", "Date", "Time", "Description", "Phone"};
         
@@ -197,6 +211,47 @@ public class FixAppointmentUI2 extends JFrame {
 
         loadAppointmentData();
     }
+
+    //=============Searching the by ID and NAME===============\\
+        public void searchData(){
+            model.setRowCount(0);
+            String search = tfSearch.getText().trim();
+            if (search.isEmpty()) {
+            loadAppointmentData();
+            return;
+        }
+            try {
+                con = DriverManager.getConnection(url, user, user_password);
+                String query = "select * from appointments where  appointment_id LIKE ? OR patient_name LIKE ?";
+
+                System.out.println("query is running....");
+                PreparedStatement pst = con.prepareStatement(query);
+                System.out.println("statement is not running.....");
+                pst.setString(1,  search);
+                pst.setString(2,  search);
+                ResultSet rs = pst.executeQuery();
+                while(rs.next()) {
+                    Object[] row ={
+                        rs.getString("appointment_id"),
+                        rs.getString("doctor_id"),
+                        rs.getString("patient_name"),
+                        rs.getString("appointment_date"),
+                        rs.getString("appointment_time"),
+                        rs.getString("description"),
+                        rs.getString("phone")
+                    };
+                    model.addRow(row);
+                } 
+                if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "No appointments found.", "Search", JOptionPane.INFORMATION_MESSAGE);
+            }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+
+
 
     //============= creating a appointment id ==========
     public static  String generateNextAppointmentId(JTextField tfAppointment){
