@@ -66,6 +66,13 @@ public class Main_Menu extends JFrame {
             }
         });
 
+        baptmnt.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                new FixAppointmentUI2().setVisible(true);
+                Main_Menu.this.setVisible(false);
+            }
+        });
+
         blogout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,9 +81,6 @@ public class Main_Menu extends JFrame {
                 Main_Menu.this.setVisible(false);
             }
         });
-
-        // baddD.addActionListener(this);
-        // baptmnt.addActionListener(this);
 
         // framing
         setSize(1050, 820);

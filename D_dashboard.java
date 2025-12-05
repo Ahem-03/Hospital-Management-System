@@ -232,6 +232,7 @@ public class D_dashboard extends JFrame {
         }
     }
 
+    //// ===========stuck in to if condition
     public void searching() {
         String patient_ID = "%" + txtPatientID.getText().trim() + "%";
         if (patient_ID.isEmpty()) {
@@ -257,8 +258,11 @@ public class D_dashboard extends JFrame {
         }
     }
 
+/// ================also stuck in insrting the data into the table =======
     public void savePrescription() {
         try {
+            con =DriverManager.getConnection(url, user, user_password);
+
             String patient_ID = txtPatientID.getText().trim();
             String patientName = txtPatientName.getText().trim();
             String Symptoms = txtSymptoms.getText().trim();

@@ -419,4 +419,3 @@ public class FixAppointmentUI2 extends JFrame {
         SwingUtilities.invokeLater(() -> new FixAppointmentUI2());
     }
 }
-
