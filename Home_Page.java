@@ -7,12 +7,12 @@ public class Home_Page extends JFrame implements Runnable{
         //initializing
         jpanel = new JPanel();
         lheading = new JLabel("-: Welcome to the Apolo Hospital :-");
-        ImageIcon bgIcon = new ImageIcon("Hospital_image.jpg");
+        ImageIcon bgIcon = new ImageIcon("image_1.png");
         Image img = bgIcon.getImage().getScaledInstance(1050, 820, Image.SCALE_SMOOTH);
         bgIcon = new ImageIcon(img);
 
         JLabel backgroundLabel = new JLabel(bgIcon);
-        backgroundLabel.setBounds(0, 0, 1050, 820);
+        backgroundLabel.setBounds(0, -20, 1050, 820);
         backgroundLabel.setLayout(null); // Allow adding components over it
         //set bounds
         //background image
@@ -23,7 +23,7 @@ public class Home_Page extends JFrame implements Runnable{
         
         //adding to the panel
         add(jpanel);
-        jpanel.add(lheading);
+        //jpanel.add(lheading);
         jpanel.add(backgroundLabel);
 
         //framing 
