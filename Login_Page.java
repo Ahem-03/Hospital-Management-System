@@ -1,14 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
-public class Login_Page extends JFrame implements ActionListener
-{
+public class Login_Page extends JFrame {
     JPanel p1;
     JLabel lh, lId, lpf;
-    JTextField tfId, tfpf;
+    JTextField tfId;
+    JPasswordField pwField;
     JButton bDoctor, bAdmin;
 
+     // Database credentials
+    final static String url = "jdbc:mysql://localhost:3306/hospital_db";
+    final static String user = "root";
+    final static String user_password = "Ahem@0304";
+
+    Connection con;
+    Statement stmt;
     public Login_Page()
     {
         //initializing
@@ -22,7 +30,7 @@ public class Login_Page extends JFrame implements ActionListener
         lpf = new JLabel("Password: ");
         //textfield
         tfId = new JTextField();
-        tfpf = new JPasswordField();
+        pwField = new JPasswordField();
         //button
         bDoctor = new JButton("Doctor Login");
         bAdmin  = new JButton("Admin Login");
@@ -34,7 +42,7 @@ lId.setBounds(320, 200, 150, 30);
 lpf.setBounds(320, 260, 150, 30);
 //text field
 tfId.setBounds(450, 200, 250, 30);
-tfpf.setBounds(450, 260, 250, 30);
+pwField.setBounds(450, 260, 250, 30);
 //button
 bDoctor.setBounds(350, 350, 150, 40);
 bAdmin.setBounds(550, 350, 150, 40);
@@ -45,7 +53,7 @@ lId.setFont(new Font("Arial", Font.BOLD, 18));
 lpf.setFont(new Font("Arial", Font.BOLD, 18));
 // Text Fields
 tfId.setFont(new Font("Arial", Font.PLAIN, 16));
-tfpf.setFont(new Font("Arial", Font.PLAIN, 16));
+pwField.setFont(new Font("Arial", Font.PLAIN, 16));
 //button
 bDoctor.setFont(new Font("Arial", Font.BOLD, 15));
 bAdmin.setFont(new Font("Arial", Font.BOLD, 15));
@@ -76,15 +84,23 @@ bAdmin.setBackground(new Color(0, 153, 76));
         p1.add(lId);
         p1.add(lpf);
         p1.add(tfId);
-        p1.add(tfpf);
+        p1.add(pwField);
         p1.add(bDoctor);
         p1.add(bAdmin);
 
 
 
 
-        bDoctor.addActionListener(this);
-        bAdmin.addActionListener(this);
+        bDoctor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                loginDoctor();
+            }
+        });
+        bAdmin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                loginAdmin();
+            }
+        });
 
         setTitle("Home Page");
         setSize(1050, 820);
@@ -93,31 +109,64 @@ bAdmin.setBackground(new Color(0, 153, 76));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void actionPerformed(ActionEvent ae)
-    {
-        // String id = tfId.getText(); 
-        // String password = tfpf.getText(); 
-        
-        if (ae.getSource() == bDoctor) {
-            new D_dashboard();
-            setVisible(true);
-            this.setVisible(false);
-            // if (id.isEmpty() || password.isEmpty()) {
-            //     JOptionPane.showMessageDialog(this, "Please enter User ID and Password!", "Empty Fields", JOptionPane.WARNING_MESSAGE);
-            // } else {
-                
-            // }
-        }
-         else if (ae.getSource() == bAdmin) {
-           new Main_Menu();
-            setVisible(true);
-            this.setVisible(false);
-            // if (id.isEmpty() || password.isEmpty()) {
-            //     JOptionPane.showMessageDialog(this, "Please enter User ID and Password!", "Empty Fields", JOptionPane.WARNING_MESSAGE);
-            // } else {
-            //     // Database connection for admin
-            // }
-        }
+
+    public void loginDoctor(){
+         String id = tfId.getText().trim(); 
+        String password = new String(pwField.getPassword()); 
+            if (id.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter User ID and Password!", "Empty Fields", JOptionPane.WARNING_MESSAGE);
+                return;
+            } 
+            try {
+                con = DriverManager.getConnection(url, user, user_password);
+                String query = "select * from doctor_password where doctor_id = ? and BINARY password = ?";
+                PreparedStatement pst = con.prepareStatement(query);
+                pst.setString(1, id);
+                pst.setString(2, password );
+                ResultSet rs = pst.executeQuery();
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(this, "Login Successful! Welcome Dr. ");
+                    new D_dashboard();
+                    this.setVisible(false);
+                }else {
+                    JOptionPane.showMessageDialog(this, "Invalid User ID or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    tfId.setText("");
+                    pwField.setText("");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Something is went wrong", "password", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+    }
+    
+    public void loginAdmin(){
+        String id = tfId.getText().trim();
+        String password = new String(pwField.getPassword());
+
+        if (id.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter User ID and Password!", "Empty Fields", JOptionPane.WARNING_MESSAGE);
+                return;
+            } 
+            try {
+                con = DriverManager.getConnection(url, user, user_password);
+                String query = "select * from admin where admin_id = ? and BINARY password = ?";
+                PreparedStatement pst = con.prepareStatement(query);
+                pst.setString(1, id);
+                pst.setString(2, password );
+                ResultSet rs = pst.executeQuery();
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(this, "Login Successful! Welcome Admin member ");
+                    new Main_Menu();
+                    this.setVisible(false);
+                }else {
+                    JOptionPane.showMessageDialog(this, "Invalid User ID or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    tfId.setText("");
+                    pwField.setText("");
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Something is went wrong", "password", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
     }
     
     public static void main(String[] args)

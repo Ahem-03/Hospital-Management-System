@@ -38,6 +38,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         txtPatientId = new JTextField();
         txtPatientId.setBounds(250, 100, 250, 35);
+        txtPatientId.setFont(new Font("Arial", Font.PLAIN, 16));
         txtPatientId.setEditable(false);
         txtPatientId.setBackground(new Color(230, 230, 230));
         txtPatientId.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -54,6 +55,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         txtName = new JTextField();
         txtName.setBounds(250, 160, 250, 35);
+        txtName.setFont(new Font("Arial", Font.PLAIN, 16));
         txtName.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtName);
 
@@ -65,6 +67,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         txtAge = new JTextField();
         txtAge.setBounds(250, 220, 250, 35);
+        txtAge.setFont(new Font("Arial", Font.PLAIN, 16));
         txtAge.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtAge);
 
@@ -101,6 +104,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         txtDisease = new JTextField();
         txtDisease.setBounds(250, 340, 250, 35);
+        txtDisease.setFont(new Font("Arial", Font.PLAIN, 16));
         txtDisease.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtDisease);
 
@@ -112,6 +116,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         txtContact = new JTextField();
         txtContact.setBounds(250, 400, 250, 35);
+        txtContact.setFont(new Font("Arial", Font.PLAIN, 16));
         txtContact.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtContact);
 
@@ -131,6 +136,11 @@ public class AddPatient extends JFrame implements ActionListener {
         btnClear.setForeground(Color.white);
         btnClear.setFont(new Font("Segoe UI", Font.BOLD, 16));
         add(btnClear);
+        btnClear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                clearForm();
+            }
+        });
 
         // Back Button
         btnBack_2 = new JButton("⬅ Back");
@@ -140,13 +150,13 @@ public class AddPatient extends JFrame implements ActionListener {
         btnBack_2.setFont(new Font("Segoe UI", Font.BOLD, 16));
         btnBack_2.addActionListener(new ViewPatient(){
             public void actionPerformed(ActionEvent e) {
-                setLocationRelativeTo(null);
-                AddPatient.this.setVisible(false);
+                AddPatient.this.dispose();
             }
         });
-        add(btnBack_2);
 
+        add(btnBack_2);
         setVisible(true);
+        setLocationRelativeTo(null);
     }
 
     // form here we will add the petient
@@ -173,7 +183,7 @@ public class AddPatient extends JFrame implements ActionListener {
                 con = DriverManager.getConnection(url, user, user_password);
                 stmt = con.createStatement();
                 System.out.println("database is connected....");
-                String query = "insert into patients(ewpatient_id ,name, age, gender, disease, contact) values ('"
+                String query = "insert into patients(patient_id ,name, age, gender, disease, contact) values ('"
                         + patient_id + "','" + name + "','" + age + "','" + gender + "','" + disease + "','" + contact
                         + "' )";
 
@@ -187,10 +197,18 @@ public class AddPatient extends JFrame implements ActionListener {
 
                 // Generate new ID for next patient
                 txtPatientId.setText(ViewPatient.generateNextPatientId(txtPatientId));
+                clearForm();
             } catch (Exception e) {
                 System.out.println("save button problem" + e);
             }
         }
+    }
+
+    public void clearForm(){
+        txtName.setText("");
+        txtAge.setText("");
+        txtDisease.setText("");
+        txtContact.setText("");
     }
 
     public static void main(String[] args) {

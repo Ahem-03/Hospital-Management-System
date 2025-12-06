@@ -7,9 +7,7 @@ import java.sql.*;
 public class D_dashboard extends JFrame {
     JPanel p, pApmtJPanel;
     JTextArea tArea;
-    JLabel lblapmt, jdtitle, jdoctorInfo, lblAppointmentID, lblPatientName, lblSymptoms, lblDiagnosis, lblMedicines,
-            lblAdvice,
-            lblNextVisit;
+    JLabel lblapmt, jdtitle, jdoctorInfo, lblAppointmentID, lblPatientName, lblSymptoms, lblDiagnosis, lblMedicines, lblAdvice, lblNextVisit;
     JTextField txtAppointmentID, txtPatientName, txtSymptoms, txtDiagnosis, txtMedicines, txtAdvice, txtNextVisit;
     JButton btnSave, btnView, btnLogout, btnSearch, btnRefresh, btnViewPrescription;
 

@@ -37,6 +37,8 @@ public class ViewPatient extends JFrame implements ActionListener{
         // = LEFT PANEL 
         leftPanel = new JPanel();
         leftPanel.setLayout(null);
+        setVisible(true);
+        setLocationRelativeTo(null);
         leftPanel.setBackground(new Color(200, 230, 250));
         leftPanel.setBounds(0, 0, 280, 820);
         add(leftPanel);
@@ -81,6 +83,7 @@ public class ViewPatient extends JFrame implements ActionListener{
                     loadPatientData();
                 }
             });  // actionPerformed(ActionEvent e) Invoked when an action occurs.
+
         btnBack = new JButton("Back");
         btnBack.setBounds(40, 330, 200, 35);
         btnBack.setBackground(new Color(255, 87, 87));
@@ -91,7 +94,6 @@ public class ViewPatient extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e ){
                  new Main_Menu();
                   setVisible(true);
-                  setSize(1050,820);
                   setLocationRelativeTo(null);
                   ViewPatient.this.setVisible(false);
             }
@@ -104,11 +106,10 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnAdd);
         btnAdd.addActionListener(new ActionListener() {
-            @Override
         public void actionPerformed(ActionEvent e){
-                AddPatient ad = new AddPatient();
-                ad.setLocationRelativeTo(null);
-                ViewPatient.this.setVisible(false);
+                new AddPatient();
+                setVisible(true);
+                ViewPatient.this.dispose();
         }  
         });   // this is the action performed method for add patient 
 
@@ -144,7 +145,7 @@ public class ViewPatient extends JFrame implements ActionListener{
           // Load data from database
         loadPatientData();
 
-        setVisible(true);
+        
     }
     //=========== this will auto generate the id ============
 
