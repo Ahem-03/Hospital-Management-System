@@ -11,12 +11,12 @@ public class D_dashboard extends JFrame {
             lblAdvice,
             lblNextVisit;
     JTextField txtAppointmentID, txtPatientName, txtSymptoms, txtDiagnosis, txtMedicines, txtAdvice, txtNextVisit;
-    JButton btnSave, btnView, btnLogout, btnSearch, btnRefresh;
+    JButton btnSave, btnView, btnLogout, btnSearch, btnRefresh, btnViewPrescription;
 
     // Table for appointments
     DefaultTableModel model;
     JTable table;
-
+    
     // Database credentials
     final static String url = "jdbc:mysql://localhost:3306/hospital_db";
     final static String user = "root";
@@ -30,7 +30,8 @@ public class D_dashboard extends JFrame {
         p = new JPanel();
         p.setLayout(null);
         p.setBackground(new Color(230, 245, 255)); // soft blue background
-        // second panel
+
+        // Initialize appointment panel
         pApmtJPanel = new JPanel();
         pApmtJPanel.setLayout(null);
         pApmtJPanel.setBackground(Color.WHITE);
@@ -80,18 +81,21 @@ public class D_dashboard extends JFrame {
         btnSave = new JButton("💾  Save Prescription");
         btnView = new JButton("📋  View Appointments");
         btnRefresh = new JButton("🔄 Refresh");
+        btnViewPrescription = new JButton("📄 View All Prescriptions");
         btnLogout = new JButton("🚪 Logout");
         // backgrund color
         btnSearch.setBackground(new Color(0, 102, 204));
         btnSave.setBackground(new Color(0, 153, 76));
         btnView.setBackground(new Color(0, 102, 204));
         btnRefresh.setBackground(new Color(0, 102, 204));
+        btnViewPrescription.setBackground(new Color(102, 51, 153));
         btnLogout.setBackground(new Color(204, 0, 0));
         // color
         btnSearch.setForeground(Color.WHITE);
         btnSave.setForeground(Color.WHITE);
         btnView.setForeground(Color.WHITE);
         btnRefresh.setForeground(Color.WHITE);
+        btnViewPrescription.setForeground(Color.WHITE);
         btnLogout.setForeground(Color.WHITE);
 
         // Add components to panel
@@ -105,6 +109,7 @@ public class D_dashboard extends JFrame {
         p.add(lblMedicines);
         p.add(lblAdvice);
         p.add(lblNextVisit);
+        p.add(lblapmt);
         // text field
         p.add(txtAppointmentID);
         p.add(txtPatientName);
@@ -117,6 +122,7 @@ public class D_dashboard extends JFrame {
         p.add(btnSearch);
         p.add(btnSave);
         p.add(btnView);
+        p.add(btnViewPrescription);
         p.add(btnLogout);
 
         add(p);
@@ -133,7 +139,12 @@ public class D_dashboard extends JFrame {
         model.addColumn("Description");
         model.addColumn("Phone");
 
-        table = new JTable(model);
+        table = new JTable(model){
+            @Override
+            public boolean isCellEditable(int row , int column){
+                return false;
+            }
+        };
         table.setRowHeight(24);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         JScrollPane tableScroll = new JScrollPane(table);
@@ -144,7 +155,7 @@ public class D_dashboard extends JFrame {
         // label
         lblapmt.setBounds(10, 10, 500, 35);
         tableScroll.setBounds(20, 50, 610, 530);
-        pApmtJPanel.add(tableScroll);
+        pApmtJPanel.add(tableScroll); 
 
         jdtitle.setBounds(0, 20, 1050, 40);
         jdoctorInfo.setBounds(0, 70, 1050, 30);
@@ -175,6 +186,7 @@ public class D_dashboard extends JFrame {
         btnSearch.setBounds(320, 140, 50, 30);
         btnSave.setBounds(20, 460, 150, 35);
         btnView.setBounds(180, 460, 160, 35);
+        btnViewPrescription.setBounds(100, 510, 180, 35);
         btnRefresh.setBounds(550, 10, 100, 30);
         btnLogout.setBounds(30, 720, 100, 35);
 
@@ -194,6 +206,11 @@ public class D_dashboard extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 loadAppointments();
                 pApmtJPanel.setVisible(true);
+            }
+        });
+        btnViewPrescription.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               new PrescriptionDetail();
             }
         });
          btnRefresh.addActionListener(new ActionListener() {
@@ -222,7 +239,7 @@ public class D_dashboard extends JFrame {
         try {
             Connection con = DriverManager.getConnection(url, user, user_password);
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM appointments");
+            ResultSet rs = stmt.executeQuery("SELECT appointment_id, patient_name, appointment_date, appointment_time, description, phone  FROM appointments");
 
             while (rs.next()) {
                 Object[] row = {
@@ -235,6 +252,8 @@ public class D_dashboard extends JFrame {
                 };
                 model.addRow(row);
             }
+            con.close();
+            stmt.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading appointments: " + e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -283,15 +302,14 @@ public class D_dashboard extends JFrame {
                     ResultSet rs = pst.executeQuery();
                     if (rs.next()) {
                         txtAppointmentID.setText(rs.getString("appointment_id"));
-                    } else {
-
-                    }
+                    } 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "Error loading " + e.getMessage(), "Error",
                             JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
             }
+            con.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading appointments: " + e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -333,6 +351,8 @@ public class D_dashboard extends JFrame {
             pst_2.executeUpdate();
             JOptionPane.showMessageDialog(this, "Record Inseted");
             clearForm();
+            con.close();
+            stmt.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error loading appointments: " + e.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -340,6 +360,7 @@ public class D_dashboard extends JFrame {
         }
     }
 
+    // ========= cleaning the form whem data will insert ===============
     public void clearForm(){
         txtAppointmentID.setText("");
                 txtPatientName.setText("");
