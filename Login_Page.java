@@ -24,11 +24,11 @@ public class Login_Page extends JFrame {
         p1.setLayout(null);
 
         ImageIcon bgIcon = new ImageIcon("image_1.png");
-        Image img = bgIcon.getImage().getScaledInstance(1050, 820, Image.SCALE_SMOOTH);
+        Image img = bgIcon.getImage().getScaledInstance(1250, 820, Image.SCALE_SMOOTH);
         bgIcon = new ImageIcon(img);
 
         JLabel backgroundLabel = new JLabel(bgIcon);
-        backgroundLabel.setBounds(0, -20, 1050, 820);
+        backgroundLabel.setBounds(0, 0, 1250, 820);
         backgroundLabel.setLayout(null); // Allow adding components over it
         // set bounds
         // background image
@@ -47,15 +47,15 @@ public class Login_Page extends JFrame {
 
         // set bounds
         // label
-        lh.setBounds(380, 80, 400, 40);
-        lId.setBounds(320, 200, 150, 30);
-        lpf.setBounds(320, 260, 150, 30);
+        lh.setBounds(425, 80, 400, 40);
+        lId.setBounds(425, 200, 150, 30);
+        lpf.setBounds(425, 260, 150, 30);
         // text field
-        tfId.setBounds(450, 200, 250, 30);
-        pwField.setBounds(450, 260, 250, 30);
+        tfId.setBounds(575, 200, 250, 30);
+        pwField.setBounds(575, 260, 250, 30);
         // button
-        bDoctor.setBounds(350, 350, 150, 40);
-        bAdmin.setBounds(550, 350, 150, 40);
+        bDoctor.setBounds(475, 350, 150, 40);
+        bAdmin.setBounds(675, 350, 150, 40);
 
         // fonts
         // label
@@ -112,7 +112,7 @@ public class Login_Page extends JFrame {
         });
 
         setTitle("Login Page");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLocationRelativeTo(null);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

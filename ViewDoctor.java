@@ -27,7 +27,7 @@ public class ViewDoctor extends JFrame {
      */
     public ViewDoctor() {
         setTitle("🏥 View Doctor Details");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         getContentPane().setBackground(new Color(240, 250, 255));
@@ -105,7 +105,7 @@ public class ViewDoctor extends JFrame {
         rightPanel = new JPanel();
         rightPanel.setLayout(null);
         rightPanel.setBackground(new Color(240, 250, 255));
-        rightPanel.setBounds(280, 0, 770, 820);
+        rightPanel.setBounds(280, 0, 970, 820);
         add(rightPanel);
 
         // Table setup
@@ -130,7 +130,7 @@ public class ViewDoctor extends JFrame {
         doctorTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         doctorTable.setRowHeight(25);
         tableScroll = new JScrollPane(doctorTable);
-        tableScroll.setBounds(20, 20, 730, 780);
+        tableScroll.setBounds(20, 20, 930, 780);
         rightPanel.add(tableScroll);
 
         // Action Listeners

@@ -6,13 +6,13 @@ public class Home_Page extends JFrame implements Runnable{
     public Home_Page() {
         //initializing
         jpanel = new JPanel();
-        lheading = new JLabel("-: Welcome to the Apolo Hospital :-");
+        lheading = new JLabel("-: Welcome to the City Hospital :-");
         ImageIcon bgIcon = new ImageIcon("image_1.png");
-        Image img = bgIcon.getImage().getScaledInstance(1050, 820, Image.SCALE_SMOOTH);
+        Image img = bgIcon.getImage().getScaledInstance(1250, 820, Image.SCALE_SMOOTH);
         bgIcon = new ImageIcon(img);
 
         JLabel backgroundLabel = new JLabel(bgIcon);
-        backgroundLabel.setBounds(0, -20, 1050, 820);
+        backgroundLabel.setBounds(0, 0, 1050, 820);
         backgroundLabel.setLayout(null); // Allow adding components over it
         //set bounds
         //background image
@@ -28,7 +28,7 @@ public class Home_Page extends JFrame implements Runnable{
 
         //framing 
         setTitle("Home Page");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center the frame
         setVisible(true);
@@ -38,7 +38,6 @@ public class Home_Page extends JFrame implements Runnable{
             Thread.sleep(3000);
             new Login_Page();
             setVisible(true);
-            setSize(1050,820);
             this.setVisible(false);
         } catch (Exception e) {
             System.out.println(e);

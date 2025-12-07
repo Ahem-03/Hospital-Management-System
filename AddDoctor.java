@@ -112,44 +112,44 @@ public class AddDoctor extends JFrame implements ActionListener {
         // Bounds (layout kept similar to project)
         setTitle("-: Add Doctor :-");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        lh.setBounds(200, 20, 450, 40);
+        lh.setBounds(400, 20, 450, 40);
 
         //tfdoctor_Id.setBounds(100, 50, 160, 280);
         tfdoctor_Id.setEditable(false);
         tfdoctor_Id.setText(ViewDoctor.generateNextDoctorId(tfdoctor_Id));
 
-        lname.setBounds(100, 90, 160, 28);
-        tfname.setBounds(270, 90, 430, 28);
+        lname.setBounds(350, 90, 160, 28);
+        tfname.setBounds(520, 90, 430, 28);
 
-        lgender.setBounds(100, 135, 160, 28);
-        cbGender.setBounds(270, 135, 200, 28);
+        lgender.setBounds(350, 135, 160, 28);
+        cbGender.setBounds(520, 135, 200, 28);
 
-        lspecialization.setBounds(100, 180, 160, 28);
-        tfspecialization.setBounds(270, 180, 430, 28);
+        lspecialization.setBounds(350, 180, 160, 28);
+        tfspecialization.setBounds(520, 180, 430, 28);
 
-        lqualification.setBounds(100, 225, 160, 28);
-        tfqualification.setBounds(270, 225, 430, 28);
+        lqualification.setBounds(350, 225, 160, 28);
+        tfqualification.setBounds(520, 225, 430, 28);
 
-        lexperience.setBounds(100, 270, 160, 28);
-        tfexperience.setBounds(270, 270, 200, 28);
+        lexperience.setBounds(350, 270, 160, 28);
+        tfexperience.setBounds(520, 270, 200, 28);
 
-        lphone.setBounds(100, 315, 160, 28);
-        tfphone.setBounds(270, 315, 200, 28);
+        lphone.setBounds(350, 315, 160, 28);
+        tfphone.setBounds(520, 315, 200, 28);
 
-        lemail.setBounds(100, 360, 160, 28);
-        tfemail.setBounds(270, 360, 430, 28);
+        lemail.setBounds(350, 360, 160, 28);
+        tfemail.setBounds(520, 360, 430, 28);
 
-        laddress.setBounds(100, 405, 160, 28);
-        addressScroll.setBounds(270, 405, 430, 80);
+        laddress.setBounds(350, 405, 160, 28);
+        addressScroll.setBounds(520, 405, 430, 80);
 
-        lavailability.setBounds(100, 500, 160, 28);
-        cbAvailability.setBounds(270, 500, 200, 28);
+        lavailability.setBounds(350, 500, 160, 28);
+        cbAvailability.setBounds(520, 500, 200, 28);
 
-        bsave.setBounds(270, 560, 140, 36);
-        bclear.setBounds(430, 560, 100, 36);
-        bmenu.setBounds(800, 700, 100, 36);
+        bsave.setBounds(520, 560, 140, 36);
+        bclear.setBounds(680, 560, 100, 36);
+        bmenu.setBounds(1050, 700, 100, 36);
 
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLocationRelativeTo(null);
 
         // Listeners (anonymous for Save & Clear)
@@ -255,6 +255,7 @@ public class AddDoctor extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "Insert failed.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+            clearForm();
         } catch (Exception e) {
             e.printStackTrace();   // show real error in console
     JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

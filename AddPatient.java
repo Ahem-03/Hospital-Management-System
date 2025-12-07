@@ -19,7 +19,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
     public AddPatient() {
         setTitle("🏥 Add New Patient");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         getContentPane().setBackground(new Color(240, 250, 255));
@@ -27,17 +27,17 @@ public class AddPatient extends JFrame implements ActionListener {
         JLabel titleLabel = new JLabel("➕ Add New Patient");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         titleLabel.setForeground(new Color(0, 60, 120));
-        titleLabel.setBounds(150, 30, 300, 40);
+        titleLabel.setBounds(475, 30, 300, 40);
         add(titleLabel);
 
         // Patient ID (Auto-generated, read-only)
         JLabel lblPatientId = new JLabel("Patient ID:");
         lblPatientId.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblPatientId.setBounds(80, 100, 150, 30);
+        lblPatientId.setBounds(380, 100, 150, 30);
         //add(lblPatientId);
 
         txtPatientId = new JTextField();
-        txtPatientId.setBounds(250, 100, 250, 35);
+        txtPatientId.setBounds(575, 100, 250, 35);
         txtPatientId.setFont(new Font("Arial", Font.PLAIN, 16));
         txtPatientId.setEditable(false);
         txtPatientId.setBackground(new Color(230, 230, 230));
@@ -50,11 +50,11 @@ public class AddPatient extends JFrame implements ActionListener {
         // Name
         JLabel lblName = new JLabel("Name:");
         lblName.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblName.setBounds(80, 160, 150, 30);
+        lblName.setBounds(405, 160, 150, 30);
         add(lblName);
 
         txtName = new JTextField();
-        txtName.setBounds(250, 160, 250, 35);
+        txtName.setBounds(575, 160, 250, 35);
         txtName.setFont(new Font("Arial", Font.PLAIN, 16));
         txtName.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtName);
@@ -62,11 +62,11 @@ public class AddPatient extends JFrame implements ActionListener {
         // Age
         JLabel lblAge = new JLabel("Age:");
         lblAge.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblAge.setBounds(80, 220, 150, 30);
+        lblAge.setBounds(405, 220, 150, 30);
         add(lblAge);
 
         txtAge = new JTextField();
-        txtAge.setBounds(250, 220, 250, 35);
+        txtAge.setBounds(575, 220, 250, 35);
         txtAge.setFont(new Font("Arial", Font.PLAIN, 16));
         txtAge.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtAge);
@@ -74,19 +74,19 @@ public class AddPatient extends JFrame implements ActionListener {
         // Gender
         JLabel lblGender = new JLabel("Gender:");
         lblGender.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblGender.setBounds(80, 280, 150, 30);
+        lblGender.setBounds(405, 280, 150, 30);
         add(lblGender);
 
         // radio button
         rbmale = new JRadioButton("Male");
-        rbmale.setBounds(250, 280, 100, 35);
+        rbmale.setBounds(575, 280, 100, 35);
         rbmale.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         rbmale.setBackground(new Color(240, 250, 255));
         add(rbmale);
         rbmale.setSelected(false);
         // female button
         rbfemale = new JRadioButton("Female");
-        rbfemale.setBounds(360, 280, 100, 35);
+        rbfemale.setBounds(685, 280, 100, 35);
         rbfemale.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         rbfemale.setBackground(new Color(240, 250, 255));
         add(rbfemale);
@@ -99,11 +99,11 @@ public class AddPatient extends JFrame implements ActionListener {
         // Disease
         JLabel lblDisease = new JLabel("Disease:");
         lblDisease.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblDisease.setBounds(80, 340, 150, 30);
+        lblDisease.setBounds(405, 340, 150, 30);
         add(lblDisease);
 
         txtDisease = new JTextField();
-        txtDisease.setBounds(250, 340, 250, 35);
+        txtDisease.setBounds(575, 340, 250, 35);
         txtDisease.setFont(new Font("Arial", Font.PLAIN, 16));
         txtDisease.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtDisease);
@@ -111,18 +111,18 @@ public class AddPatient extends JFrame implements ActionListener {
         // Contact
         JLabel lblContact = new JLabel("Contact:");
         lblContact.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        lblContact.setBounds(80, 400, 150, 30);
+        lblContact.setBounds(405, 400, 150, 30);
         add(lblContact);
 
         txtContact = new JTextField();
-        txtContact.setBounds(250, 400, 250, 35);
+        txtContact.setBounds(575, 400, 250, 35);
         txtContact.setFont(new Font("Arial", Font.PLAIN, 16));
         txtContact.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
         add(txtContact);
 
         // Save Button
         btnSave = new JButton("💾 Save Patient");
-        btnSave.setBounds(80, 480, 180, 45);
+        btnSave.setBounds(405, 480, 180, 45);
         btnSave.setBackground(new Color(0, 153, 102));
         btnSave.setForeground(Color.white);
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -131,7 +131,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         // Clear Button
         btnClear = new JButton("🔄 Clear");
-        btnClear.setBounds(280, 480, 100, 45);
+        btnClear.setBounds(605, 480, 100, 45);
         btnClear.setBackground(new Color(255, 165, 0));
         btnClear.setForeground(Color.white);
         btnClear.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -144,7 +144,7 @@ public class AddPatient extends JFrame implements ActionListener {
 
         // Back Button
         btnBack_2 = new JButton("⬅ Back");
-        btnBack_2.setBounds(400, 480, 100, 45);
+        btnBack_2.setBounds(725, 480, 100, 45);
         btnBack_2.setBackground(new Color(255, 87, 87));
         btnBack_2.setForeground(Color.white);
         btnBack_2.setFont(new Font("Segoe UI", Font.BOLD, 16));

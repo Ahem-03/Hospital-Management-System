@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class FixAppointmentUI2 extends JFrame {
+public class FixAppointment extends JFrame {
     // Left panel components (keeps same layout/fields as your previous left panel)
     JLabel lheader, lAppointmet, ldoctorId, lpatientName, ldate, ltime, ldesc, lphone;
     JTextField tfAppointment, tfDoctorId, tfPatientName, tfDate, tfTime, tfPhone, tfSearch;
@@ -23,9 +23,9 @@ public class FixAppointmentUI2 extends JFrame {
     static Connection con,con_1;
     static Statement stmt, stmt_1;
 
-    public FixAppointmentUI2() {
+    public FixAppointment() {
         setTitle("Fix Appointment - Frontend");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLayout(null);
         getContentPane().setBackground(new Color(245, 250, 255));
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -125,7 +125,7 @@ public class FixAppointmentUI2 extends JFrame {
         // RIGHT panel - table only 
         JPanel right = new JPanel(null);
         right.setBackground(new Color(250, 250, 250));
-        right.setBounds(420, 0, 630, 820);
+        right.setBounds(420, 0, 830, 820);
         add(right);
 
         JLabel listLabel = new JLabel("Scheduled Appointments");
@@ -135,11 +135,11 @@ public class FixAppointmentUI2 extends JFrame {
 
         tfSearch = new JTextField();
          // place search on top-right of the right panel
-        tfSearch.setBounds(380, 20, 140, 28);
+        tfSearch.setBounds(480, 20, 140, 28);
         right.add(tfSearch);
 
         btnSearch = new JButton("Search");
-        btnSearch.setBounds(530, 20, 80, 28);
+        btnSearch.setBounds(630, 20, 80, 28);
         right.add(btnSearch);
         btnSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -156,7 +156,7 @@ public class FixAppointmentUI2 extends JFrame {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tableScroll = new JScrollPane(table);
-        tableScroll.setBounds(20, 60, 590, 700);
+        tableScroll.setBounds(20, 60, 790, 700);
         right.add(tableScroll);
 
         // Anonymous listeners (left panel behavior + direct model updates)
@@ -179,11 +179,11 @@ public class FixAppointmentUI2 extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int row = table.getSelectedRow();
                 if (row == -1) {
-                    JOptionPane.showMessageDialog(FixAppointmentUI2.this, "Select a row to delete.", "Delete", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(FixAppointment.this, "Select a row to delete.", "Delete", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
                 String appointmentID = model.getValueAt(row ,0).toString();
-                int confirm = JOptionPane.showConfirmDialog(FixAppointmentUI2.this, "Delete selected appointment?", "Confirm", JOptionPane.YES_NO_OPTION);
+                int confirm = JOptionPane.showConfirmDialog(FixAppointment.this, "Delete selected appointment?", "Confirm", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     rowDelete(appointmentID);
                 }
@@ -202,13 +202,14 @@ public class FixAppointmentUI2 extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try { new Main_Menu().setVisible(true); } 
                 catch (Throwable t) { /* ignore */ }
-                FixAppointmentUI2.this.dispose();
+                FixAppointment.this.dispose();
             }
         });
 
         setLocationRelativeTo(null);
         setVisible(true);
 
+        tfAppointment.setText(generateNextAppointmentId(tfAppointment));
         loadAppointmentData();
     }
 
@@ -278,6 +279,13 @@ public class FixAppointmentUI2 extends JFrame {
     //============= For saving the data into the table ===================
     private void saveToTable() {
         String appointment_Id = tfAppointment.getText().trim();
+
+         // Generate ID if empty
+       if (appointment_Id.isEmpty()) {
+           appointment_Id = generateNextAppointmentId(tfAppointment);
+           tfAppointment.setText(appointment_Id);
+       }
+
         String doctor_id = tfDoctorId.getText().trim();
         String patient = tfPatientName.getText().trim();
         String date = tfDate.getText().trim();
@@ -416,6 +424,6 @@ public class FixAppointmentUI2 extends JFrame {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        SwingUtilities.invokeLater(() -> new FixAppointmentUI2());
+        SwingUtilities.invokeLater(() -> new FixAppointment());
     }
 }

@@ -29,7 +29,7 @@ public class ViewPatient extends JFrame implements ActionListener{
 
     public ViewPatient() {
         setTitle("🏥 View Patient Details");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         getContentPane().setBackground(new Color(240, 250, 255)); // light hospital blue
@@ -107,9 +107,8 @@ public class ViewPatient extends JFrame implements ActionListener{
         leftPanel.add(btnAdd);
         btnAdd.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e){
-                new AddPatient();
-                setVisible(true);
-                ViewPatient.this.dispose();
+                new AddPatient().setVisible(true);
+               ViewPatient.this.setVisible(false);
         }  
         });   // this is the action performed method for add patient 
 
@@ -117,7 +116,7 @@ public class ViewPatient extends JFrame implements ActionListener{
         rightPanel = new JPanel();
         rightPanel.setLayout(null);
         rightPanel.setBackground(Color.white);
-        rightPanel.setBounds(280, 0, 770, 820);
+        rightPanel.setBounds(280, 0, 970, 820);
         add(rightPanel);
 
         JLabel tableTitle = new JLabel("All Registered Patients", JLabel.CENTER);
@@ -139,7 +138,7 @@ public class ViewPatient extends JFrame implements ActionListener{
         patientTable.getTableHeader().setForeground(Color.white);
 
         tableScroll = new JScrollPane(patientTable);
-        tableScroll.setBounds(20, 70, 730, 700);
+        tableScroll.setBounds(20, 70, 930, 700);
         rightPanel.add(tableScroll);
 
           // Load data from database

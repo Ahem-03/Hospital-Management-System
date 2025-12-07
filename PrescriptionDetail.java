@@ -39,7 +39,7 @@ public class PrescriptionDetail extends JFrame {
         tablePresc.setRowHeight(24);
         tablePresc.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         JScrollPane tablePrescScroll = new JScrollPane(tablePresc);
-        tablePrescScroll.setBounds(20, 80, 1010, 680);
+        tablePrescScroll.setBounds(20, 80, 1210, 680);
         pPrescJPanel.add(tablePrescScroll);
         
         // Title label
@@ -53,7 +53,7 @@ public class PrescriptionDetail extends JFrame {
         JButton btnBack = new JButton("Back");
         btnBack.setBackground(new Color(52, 105, 158));
         btnBack.setForeground(Color.WHITE);
-        btnBack.setBounds(950, 20, 80, 30);
+        btnBack.setBounds(1150, 20, 80, 30);
         btnBack.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new D_dashboard().setVisible(true);
@@ -66,7 +66,7 @@ public class PrescriptionDetail extends JFrame {
 
         // Frame setup
         setTitle("Prescription Details");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);

@@ -149,10 +149,10 @@ public class D_dashboard extends JFrame {
 
         // setBounds (x, y, w, h)
         // Appointment panel
-        pApmtJPanel.setBounds(370, 140, 650, 610);
+        pApmtJPanel.setBounds(500, 140, 720, 610);
         // label
         lblapmt.setBounds(10, 10, 500, 35);
-        tableScroll.setBounds(20, 50, 610, 530);
+        tableScroll.setBounds(20, 50, 680, 530);
         pApmtJPanel.add(tableScroll); 
 
         jdtitle.setBounds(0, 20, 1050, 40);
@@ -225,7 +225,7 @@ public class D_dashboard extends JFrame {
 
         // Frame
         setTitle("Doctor Dashboard");
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);

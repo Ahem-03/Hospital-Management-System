@@ -11,8 +11,17 @@ public class Main_Menu extends JFrame {
         // initializing
         p1 = new JPanel();
         p1.setLayout(null);
+
+        ImageIcon bgIcon = new ImageIcon("image_1.png");
+        Image img = bgIcon.getImage().getScaledInstance(1250, 820, Image.SCALE_SMOOTH);
+        bgIcon = new ImageIcon(img);
+
+        JLabel backgroundLabel = new JLabel(bgIcon);
+        backgroundLabel.setBounds(0, 0, 1250, 820);
+        backgroundLabel.setLayout(null); // Allow adding components over background
+
         p1.setBackground(new Color(235, 245, 255));
-        lh = new JLabel(" -: Appolo Hospital :- ", JLabel.CENTER);
+        lh = new JLabel(" -: City Hospital :- ", JLabel.CENTER);
         baddp = new JButton(" 🧑‍🤝‍🧑 Manage patient");
         baddD = new JButton("👨‍⚕️ Manage Doctors");
         baptmnt = new JButton(" 📅 Fix appointment");
@@ -30,21 +39,33 @@ public class Main_Menu extends JFrame {
         baddD.setBackground(new Color(51, 153, 255));
         baptmnt.setBackground(new Color(102, 102, 255));
         blogout.setBackground(new Color(220, 53, 69));
-        // adding to the panel
+        
+        // set foreground to white for better contrast
+        lh.setForeground(Color.WHITE);
+        baddp.setForeground(Color.WHITE);
+        baddD.setForeground(Color.WHITE);
+        baptmnt.setForeground(Color.WHITE);
+        blogout.setForeground(Color.WHITE);
+        
+        // Add background first
+        p1.add(backgroundLabel);
+        
+        // Add components to background label (not panel)
+        //backgroundLabel.add(lh);
+        backgroundLabel.add(baddp);
+        backgroundLabel.add(baddD);
+        backgroundLabel.add(baptmnt);
+        backgroundLabel.add(blogout);
+
         add(p1);
-        p1.add(lh);
-        p1.add(baddp);
-        p1.add(baddD);
-        p1.add(baptmnt);
-        p1.add(blogout);
 
         // set bounds (x,y,w,h)
         setTitle("Main Menu");
-        lh.setBounds(0, 20, 1050, 50);
-        baddp.setBounds(300, 200, 250, 50); // Add Patient
-        baddD.setBounds(300, 340, 250, 50); // Add Doctor
-        baptmnt.setBounds(300, 480, 250, 50); // appointment
-        blogout.setBounds(900, 720, 130, 45); // Logout
+        lh.setBounds(0, 20, 1250, 50);
+        baddp.setBounds(30, 250, 280, 60); // Add Patient
+        baddD.setBounds(30, 380, 280, 60); // Add Doctor
+        baptmnt.setBounds(30, 510, 280, 60); // appointment
+        blogout.setBounds(30, 690, 140, 50); // Logout
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -68,7 +89,7 @@ public class Main_Menu extends JFrame {
 
         baptmnt.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                new FixAppointmentUI2().setVisible(true);
+                new FixAppointment().setVisible(true);
                 Main_Menu.this.setVisible(false);
             }
         });
@@ -83,7 +104,7 @@ public class Main_Menu extends JFrame {
         });
 
         // framing
-        setSize(1050, 820);
+        setSize(1250, 820);
         setLocationRelativeTo(null);
         setVisible(true);
     }
