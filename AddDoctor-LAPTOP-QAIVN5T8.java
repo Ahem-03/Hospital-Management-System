@@ -1,0 +1,291 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.util.regex.Pattern;
+
+public class AddDoctor extends JFrame implements ActionListener {
+    JPanel p1;
+    JLabel lh, lname, lgender, lspecialization, lqualification, lexperience, lphone, lemail, laddress, lavailability;
+    JTextField tfdoctor_Id, tfname, tfspecialization, tfqualification, tfexperience, tfphone, tfemail;
+    JComboBox<String> cbGender, cbAvailability;
+    JTextArea taAddress;
+    JButton bsave, bclear, bmenu;
+
+     // database connection
+    final static String url = "jdbc:mysql://localhost:3306/hospital_db";
+    final static String user = "root";
+    final static String user_password = "Ahem@0304";
+    public static Connection con;
+    public static Statement stmt;
+    public static ResultSet rs;
+
+    public AddDoctor() {
+        // initialization
+        p1 = new JPanel();
+        p1.setLayout(null);
+        p1.setBackground(new Color(245, 250, 255));
+        add(p1);
+
+        // Header Label
+        lh = new JLabel("Add Doctor", JLabel.CENTER);
+        lh.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lh.setForeground(new Color(10, 60, 120));
+
+        // Labels
+        lname = new JLabel("Name");
+        lgender = new JLabel("Gender");
+        lspecialization = new JLabel("Specialization");
+        lqualification = new JLabel("Qualification");
+        lexperience = new JLabel("Experience (yrs)");
+        lphone = new JLabel("Phone");
+        lemail = new JLabel("Email");
+        laddress = new JLabel("Address");
+        lavailability = new JLabel("Availability");
+
+        // Inputs
+        tfdoctor_Id = new JTextField();
+        tfname = new JTextField();
+        cbGender = new JComboBox<>(new String[] {"Select", "Male", "Female", "Other"});
+        tfspecialization = new JTextField();
+        tfqualification = new JTextField();
+        tfexperience = new JTextField();
+        tfphone = new JTextField();
+        tfemail = new JTextField();
+        taAddress = new JTextArea();
+        taAddress.setLineWrap(true);
+        taAddress.setWrapStyleWord(true);
+        JScrollPane addressScroll = new JScrollPane(taAddress);
+
+        cbAvailability = new JComboBox<>(new String[] {"Available", "Not Available", "On Leave"});
+
+        // Buttons
+        bsave = new JButton("Save");
+        bclear = new JButton("Clear");
+        bmenu = new JButton("Menu");
+
+        // Styling label
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
+        lname.setFont(labelFont); 
+        lgender.setFont(labelFont); 
+        lspecialization.setFont(labelFont);
+        lqualification.setFont(labelFont);
+        lexperience.setFont(labelFont); 
+        lphone.setFont(labelFont);
+        lemail.setFont(labelFont); 
+        laddress.setFont(labelFont); 
+        lavailability.setFont(labelFont);
+
+        //Styling textfiled
+        tfdoctor_Id.setFont(labelFont);
+        tfname.setFont(labelFont); 
+        tfspecialization.setFont(labelFont); 
+        tfqualification.setFont(labelFont);
+        tfexperience.setFont(labelFont); 
+        tfphone.setFont(labelFont); 
+        tfemail.setFont(labelFont);
+        cbGender.setFont(labelFont); 
+        cbAvailability.setFont(labelFont); 
+        taAddress.setFont(labelFont);
+
+        bsave.setBackground(new Color(0, 123, 102)); 
+        bsave.setForeground(Color.WHITE);
+        bclear.setBackground(new Color(200, 200, 200));
+
+        bmenu.setBackground(new Color(52, 105, 158)); 
+        bmenu.setForeground(Color.WHITE);
+
+        // Add to panel
+        p1.add(lh);
+        p1.add(tfdoctor_Id);
+        p1.add(lname); p1.add(tfname);
+        p1.add(lgender); p1.add(cbGender);
+        p1.add(lspecialization); p1.add(tfspecialization);
+        p1.add(lqualification); p1.add(tfqualification);
+        p1.add(lexperience); p1.add(tfexperience);
+        p1.add(lphone); p1.add(tfphone);
+        p1.add(lemail); p1.add(tfemail);
+        p1.add(laddress); p1.add(addressScroll);
+        p1.add(lavailability); p1.add(cbAvailability);
+        p1.add(bsave); p1.add(bclear); p1.add(bmenu);
+
+        // Bounds (layout kept similar to project)
+        setTitle("-: Add Doctor :-");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        lh.setBounds(400, 20, 450, 40);
+
+        //tfdoctor_Id.setBounds(100, 50, 160, 280);
+        tfdoctor_Id.setEditable(false);
+        tfdoctor_Id.setText(ViewDoctor.generateNextDoctorId(tfdoctor_Id));
+
+        lname.setBounds(350, 90, 160, 28);
+        tfname.setBounds(520, 90, 430, 28);
+
+        lgender.setBounds(350, 135, 160, 28);
+        cbGender.setBounds(520, 135, 200, 28);
+
+        lspecialization.setBounds(350, 180, 160, 28);
+        tfspecialization.setBounds(520, 180, 430, 28);
+
+        lqualification.setBounds(350, 225, 160, 28);
+        tfqualification.setBounds(520, 225, 430, 28);
+
+        lexperience.setBounds(350, 270, 160, 28);
+        tfexperience.setBounds(520, 270, 200, 28);
+
+        lphone.setBounds(350, 315, 160, 28);
+        tfphone.setBounds(520, 315, 200, 28);
+
+        lemail.setBounds(350, 360, 160, 28);
+        tfemail.setBounds(520, 360, 430, 28);
+
+        laddress.setBounds(350, 405, 160, 28);
+        addressScroll.setBounds(520, 405, 430, 80);
+
+        lavailability.setBounds(350, 500, 160, 28);
+        cbAvailability.setBounds(520, 500, 200, 28);
+
+        bsave.setBounds(520, 560, 140, 36);
+        bclear.setBounds(680, 560, 100, 36);
+        bmenu.setBounds(1050, 700, 100, 36);
+
+        setSize(1250, 820);
+        setLocationRelativeTo(null);
+
+        // Listeners (anonymous for Save & Clear)
+        bsave.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onSaveFrontend();
+            }
+        });
+
+        bclear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearForm();
+            }
+        });
+
+        bmenu.addActionListener(this);
+
+        setVisible(true);
+    }
+
+    private void onSaveFrontend() {
+        String name = tfname.getText().trim();
+        String gender = (String) cbGender.getSelectedItem();
+        String specialization = tfspecialization.getText().trim();
+        String qualification = tfqualification.getText().trim();
+        String experience = tfexperience.getText().trim();
+        String phone = tfphone.getText().trim();
+        String email = tfemail.getText().trim();
+        String address = taAddress.getText().trim();
+        String availability = (String) cbAvailability.getSelectedItem();
+
+        // basic validation
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Name is required.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if ("Select".equals(gender)) {
+            JOptionPane.showMessageDialog(this, "Please select gender.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!experience.matches("^\\d{1,2}$")) {
+            JOptionPane.showMessageDialog(this, "Enter valid experience in years (0-99).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!phone.isEmpty() && !phone.matches("\\d{7,15}")) {
+            JOptionPane.showMessageDialog(this, "Phone must be 7-15 digits.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (!email.isEmpty()) {
+           String regex = "^[\\w-.]+@[\\w-]+\\.[a-zA-Z]{2,}$";
+            if (!Pattern.matches(regex, email)) {
+                JOptionPane.showMessageDialog(this, "Enter a valid email.", "Validation", JOptionPane.WARNING_MESSAGE);
+              return;
+            }
+        }
+
+        // simulate save: show summary modal
+        StringBuilder sb = new StringBuilder();
+        sb.append("Doctor  saved:\n\n");
+        sb.append("Name: ").append(name).append("\n");
+        sb.append("Gender: ").append(gender).append("\n");
+        sb.append("Specialization: ").append(specialization).append("\n");
+        sb.append("Qualification: ").append(qualification).append("\n");
+        sb.append("Experience: ").append(experience).append(" yrs\n");
+        sb.append("Phone: ").append(phone).append("\n");
+        sb.append("Email: ").append(email).append("\n");
+        sb.append("Availability: ").append(availability).append("\n");
+        sb.append("Address: ").append(address).append("\n");
+
+        JOptionPane.showMessageDialog(this, sb.toString(), "Saved", JOptionPane.INFORMATION_MESSAGE);
+        
+        // this will auto generate the doctor id 
+            tfdoctor_Id.setText(ViewDoctor.generateNextDoctorId(tfdoctor_Id));
+
+        String doctor_Id = tfdoctor_Id.getText().trim();
+
+        
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            System.out.println("dtabase is connected ");
+
+            stmt = con.createStatement();
+            
+            String query = "insert into doctor_db(Doctor_id, name, gender, specialization, qualification, experience, phone, email, availability, address) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            PreparedStatement pst = con.prepareStatement(query);
+        pst.setString(1, doctor_Id);
+        pst.setString(2, name);
+        pst.setString(3, gender);
+        pst.setString(4, specialization);
+        pst.setString(5, qualification);
+        pst.setString(6, experience);
+        pst.setString(7, phone);
+        pst.setString(8, email);
+        pst.setString(9, availability);
+        pst.setString(10, address);
+
+           int rows = pst.executeUpdate();
+            if (rows > 0) {
+                JOptionPane.showMessageDialog(this, "Record inserted.");
+            } else {
+                JOptionPane.showMessageDialog(this, "Insert failed.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            clearForm();
+        } catch (Exception e) {
+            e.printStackTrace();   // show real error in console
+    JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearForm() {
+        tfname.setText("");
+        cbGender.setSelectedIndex(0);
+        tfspecialization.setText("");
+        tfqualification.setText("");
+        tfexperience.setText("");
+        tfphone.setText("");
+        tfemail.setText("");
+        taAddress.setText("");
+        cbAvailability.setSelectedIndex(0);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == bmenu) {
+            Main_Menu m = new Main_Menu();
+            m.setVisible(true);
+            m.setSize(1050, 820);
+            m.setLocationRelativeTo(null);
+            this.setVisible(false);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new AddDoctor());
+    }
+}
