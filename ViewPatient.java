@@ -15,7 +15,7 @@ public class ViewPatient extends JFrame implements ActionListener{
     DefaultTableModel model;
     //======these componats are for Addpatient Panel=========== 
     JPanel addPanel;
-    JTextField txtPatientId, txtName, txtAge, txtDisease, txtContact;
+    JTextField txtPatientId, txtName, txtAge, txtDisease, txtContact, txtWardNumber, txtRoomNumber;
     JRadioButton rbmale, rbfemale;
     JButton btnSave, btnClear,btnAdd,  btnBack_2;
 
@@ -125,8 +125,8 @@ public class ViewPatient extends JFrame implements ActionListener{
         tableTitle.setBounds(0, 20, 300, 30);
         rightPanel.add(tableTitle);
 
-        //table initializing 
-        String[] column = {"Patient ID", "Name", "Age", "Gender", "Disease", "Contact"};
+        //table initializing with Ward Number and Room Number columns
+        String[] column = {"Patient ID", "Name", "Age", "Gender", "Disease", "Contact", "Ward No.", "Room No."};
         model = new DefaultTableModel(column,0);
         
         // creating a table 
@@ -189,7 +189,9 @@ public class ViewPatient extends JFrame implements ActionListener{
                 rs.getString("age"),
                 rs.getString("gender"),
                 rs.getString("disease"),
-                rs.getString("contact")
+                rs.getString("contact"),
+                rs.getString("ward_number"),
+                rs.getString("room_number")
             };
             model.addRow(row);
         }
@@ -204,7 +206,12 @@ public class ViewPatient extends JFrame implements ActionListener{
         // =================== searching button ============ 
          if (e.getSource()==btnSearch) {
              model.setRowCount(0);
-            String id = searchField.getText(); 
+            String id = searchField.getText();
+            if (id.isEmpty()) {
+                JOptionPane.showMessageDialog(this ,"Text Field can not be Empty");
+                loadPatientData();
+                return;
+            } 
             try {
                 String query_2 = "select * from patients where patient_id = '"+id+"' or name = '"+id+"'";
                 System.out.println("query is running...");
@@ -217,6 +224,8 @@ public class ViewPatient extends JFrame implements ActionListener{
                         rs.getString("gender"),
                         rs.getString("disease"),
                         rs.getString("contact"),
+                        rs.getString("ward_number"),
+                        rs.getString("room_number")
                     };
                     model.addRow(row);
                 }
