@@ -1,136 +1,374 @@
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
-public class ViewDoctor extends JFrame  implements ActionListener{
-    JPanel p1;
-    JLabel lh, lId, lname, lgender, lspecialization, lqualification, lexperience, lphone, lemail, laddress, lavailability;
-    JTextField tfId, tfname, tfgender, tfspecialization, tfqualification, tfexperience, tfphone, tfemail, tfaddress, tfavailability;
-    JButton bupdate, bsearch, bview, bmenu;
+public class ViewDoctor extends JFrame {
+    JPanel leftPanel, rightPanel;
+    JLabel titleLabel, filterLabel;
+    JTextField searchField;
+    JButton btnSearch, btnRefresh, btnAdd, btnUpdate, btnDelete, btnBack;
+    JTable doctorTable;
+    JScrollPane tableScroll;
+    DefaultTableModel model;
 
+    // database connection
+    final static String url = "jdbc:mysql://localhost:3306/hospital_db";
+    final static String user = "root";
+    final static String user_password = "Ahem@0304";
+    public static Connection con;
+    public static Statement stmt;
+    public static ResultSet rs;
+
+    /**
+     * 
+     */
     public ViewDoctor() {
-//initialization
-        p1 = new JPanel();
-        p1.setLayout(null);
-
-// Header Label
-        lh = new JLabel("-: City Hospital :-");
-// Labels
-        lId  = new JLabel("ID");
-        lname = new JLabel("Name");
-        lgender = new JLabel("Gender");
-        lspecialization = new JLabel("Specialization");
-        lqualification = new JLabel("Qualification");
-        lexperience = new JLabel("Experience");
-        lphone = new JLabel("Phone");
-        lemail = new JLabel("Email");
-        laddress = new JLabel("Address");
-        lavailability = new JLabel("Availability");
-
-// TextFields
-        tfId  = new JTextField();
-        tfname = new JTextField();
-        tfgender = new JTextField();
-        tfspecialization = new JTextField();
-        tfqualification = new JTextField();
-        tfexperience = new JTextField();
-        tfphone = new JTextField();
-        tfemail = new JTextField();
-        tfaddress = new JTextField();
-        tfavailability = new JTextField();
-
-// Button
-        bsearch = new JButton("search");
-        bupdate = new JButton("update");
-        bview = new JButton("view all");
-        bmenu = new JButton("Menu");
-
-        // Adding to panel
-        add(p1);
-//label
-        p1.add(lId);
-        p1.add(lh);
-        p1.add(lname);
-        p1.add(lgender);
-        p1.add(lspecialization);
-        p1.add(lqualification);
-        p1.add(lexperience);
-        p1.add(lphone);
-        p1.add(lemail);
-        p1.add(laddress);
-        p1.add(lavailability);
-//text field
-        p1.add(tfId);
-        p1.add(tfname);
-        p1.add(tfgender);
-        p1.add(tfspecialization);
-        p1.add(tfqualification);
-        p1.add(tfexperience);
-        p1.add(tfphone);
-        p1.add(tfemail);
-        p1.add(tfaddress);
-        p1.add(tfavailability);
-//button
-        p1.add(bsearch);
-        p1.add(bupdate);
-        p1.add(bview);
-        p1.add(bmenu);
-
-// Set bounds (x, y, width, height)
-        setTitle("View Doctor");
-
-// Header
-        lh.setBounds(320, 10, 200, 30);
-
-// Labels - compact left side
-        lId.setBounds(30, 50, 100, 25);
-        lname.setBounds(30, 80, 100, 25);
-        lgender.setBounds(30, 115, 100, 25);
-        lspecialization.setBounds(30, 150, 100, 25);
-        lqualification.setBounds(30, 185, 100, 25);
-        lexperience.setBounds(30, 220, 100, 25);
-        lphone.setBounds(30, 255, 100, 25);
-        lemail.setBounds(30, 290, 100, 25);
-        laddress.setBounds(30, 325, 100, 25);
-        lavailability.setBounds(30, 360, 100, 25);
-
-// TextFields - compact
-        tfId.setBounds(140, 50, 180, 25);
-        tfname.setBounds(140, 80, 180, 25);
-        tfgender.setBounds(140, 115, 180, 25);
-        tfspecialization.setBounds(140, 150, 180, 25);
-        tfqualification.setBounds(140, 185, 180, 25);
-        tfexperience.setBounds(140, 220, 180, 25);
-        tfphone.setBounds(140, 255, 180, 25);
-        tfemail.setBounds(140, 290, 180, 25);
-        tfaddress.setBounds(140, 325, 180, 25);
-        tfavailability.setBounds(140, 360, 180, 25);
-
-// Buttons - horizontal row below form
-        bsearch.setBounds(320, 50, 80, 25);
-        bupdate.setBounds(130, 405, 90, 30);
-        bview.setBounds(230, 405, 90, 30);
-        bmenu.setBounds(700, 700, 100, 40);
-
-        bmenu.addActionListener(this);
+        setTitle("🏥 View Doctor Details");
+        setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+        getContentPane().setBackground(new Color(240, 250, 255));
+
+        // LEFT PANEL
+        leftPanel = new JPanel();
+        leftPanel.setLayout(null);
+        leftPanel.setBackground(new Color(200, 230, 250));
+        leftPanel.setBounds(0, 0, 280, 820);
+        add(leftPanel);
+
+        // Title Label
+        titleLabel = new JLabel("👨‍⚕️ View Doctors");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        titleLabel.setForeground(new Color(0, 60, 120));
+        titleLabel.setBounds(40, 40, 200, 30);
+        leftPanel.add(titleLabel);
+
+        // Filter/Search
+        filterLabel = new JLabel("Search by Name/ID:");
+        filterLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        filterLabel.setBounds(40, 100, 200, 25);
+        leftPanel.add(filterLabel);
+
+        // search field
+        searchField = new JTextField();
+        searchField.setBounds(40, 130, 200, 30);
+        searchField.setBorder(BorderFactory.createLineBorder(new Color(0, 102, 204)));
+        leftPanel.add(searchField);
+
+        // buttons
+        btnSearch = new JButton("Search");
+        btnSearch.setBounds(40, 180, 200, 35);
+        btnSearch.setBackground(new Color(0, 120, 215));
+        btnSearch.setForeground(Color.WHITE);
+        btnSearch.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnSearch);
+
+        btnRefresh = new JButton("Refresh");
+        btnRefresh.setBounds(40, 230, 200, 35);
+        btnRefresh.setBackground(new Color(0, 153, 102));
+        btnRefresh.setForeground(Color.WHITE);
+        btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnRefresh);
+
+        btnAdd = new JButton("Add Doctor");
+        btnAdd.setBounds(40, 280, 200, 35);
+        btnAdd.setBackground(new Color(52, 105, 158));
+        btnAdd.setForeground(Color.WHITE);
+        btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnAdd);
+
+        btnUpdate = new JButton("Update");
+        btnUpdate.setBounds(40, 330, 200, 35);
+        btnUpdate.setBackground(new Color(255, 193, 7));
+        btnUpdate.setForeground(Color.BLACK);
+        btnUpdate.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnUpdate);
+
+        btnDelete = new JButton("Delete");
+        btnDelete.setBounds(40, 380, 200, 35);
+        btnDelete.setBackground(new Color(244, 67, 54));
+        btnDelete.setForeground(Color.WHITE);
+        btnDelete.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnDelete);
+
+        btnBack = new JButton("Back");
+        btnBack.setBounds(40, 430, 200, 35);
+        btnBack.setBackground(new Color(255, 87, 87));
+        btnBack.setForeground(Color.WHITE);
+        btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnBack);
+
+        // RIGHT PANEL - TABLE
+        rightPanel = new JPanel();
+        rightPanel.setLayout(null);
+        rightPanel.setBackground(new Color(240, 250, 255));
+        rightPanel.setBounds(280, 0, 970, 820);
+        add(rightPanel);
+
+        // Table setup
+        model = new DefaultTableModel();
+        model.addColumn("Doctor ID");
+        model.addColumn("Name");
+        model.addColumn("Gender");
+        model.addColumn("Specialization");
+        model.addColumn("Qualification");
+        model.addColumn("Experience");
+        model.addColumn("Phone");
+        model.addColumn("Address");
+        model.addColumn("Availability");
+
+        // create JTable once with ID column read-only
+        doctorTable = new JTable(model) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column != 0;   // Doctor ID not editable
+            }
+        };
+        doctorTable.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        doctorTable.setRowHeight(25);
+        tableScroll = new JScrollPane(doctorTable);
+        tableScroll.setBounds(20, 20, 930, 780);
+        rightPanel.add(tableScroll);
+
+        // Action Listeners
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchDoctor();
+            }
+        });
+
+        btnRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDoctorData();
+            }
+        });
+
+        btnAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new AddDoctor();
+                ViewDoctor.this.setVisible(false);
+            }
+        });
+
+        // update DB when model changes (only handle UPDATE events)
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() != TableModelEvent.UPDATE) return;
+                int row = e.getFirstRow();
+                int col = e.getColumn();
+                if (row < 0 || col < 0) return;
+
+                String columnName = model.getColumnName(col);
+                Object newValue = model.getValueAt(row, col);
+                Object idObj = model.getValueAt(row, 0);
+                if (idObj == null) return;
+                String doctorId = idObj.toString();
+                updateDoctor(doctorId, columnName, newValue);
+            }
+        });
+
+        btnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = doctorTable.getSelectedRow();
+                if (selectedRow == -1) {
+                    JOptionPane.showMessageDialog(ViewDoctor.this, "Please select a doctor to delete.", "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                String doctorId = model.getValueAt(selectedRow, 0).toString();
+                int confirm = JOptionPane.showConfirmDialog(ViewDoctor.this, "Are you sure you want to delete Doctor ID: " + doctorId + "?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    deleteDoctor(doctorId);
+                }
+            }
+        });
+
+        btnBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Main_Menu();
+                ViewDoctor.this.setVisible(false);
+            }
+        });
+
+        loadDoctorData();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
+     //=========== this will auto generate the id ============
 
+    public static String generateNextDoctorId(JTextField tfdoctor_Id){
+        String nextId = "D101";
+        String query = "select Doctor_id from doctor_db ORDER BY Doctor_id DESC LIMIT 1";
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+        stmt = con.createStatement();
+        System.out.println("database is connected....");
+        rs = stmt.executeQuery(query);
 
-    public  void actionPerformed(ActionEvent ae) {
-        if (ae.getSource() == bmenu) {     // add patient page will open
-            Main_Menu m = new Main_Menu();
-            m.setVisible(true);
-            m.setSize(850, 800);
-            m.setLocationRelativeTo(null);
-            this.setVisible(false);
+        if(rs.next()){
+            String lastId = rs.getString("doctor_id");
+            // Extract numeric part from "D101" -> 101
+                int numericPart = Integer.parseInt(lastId.substring(1));
+                // Increment and format
+                nextId = "D" + (numericPart + 1);
+                return nextId;
+        }
+        } catch (Exception e) {
+            System.out.println(" Doctor id problem"+ e);
+        }
+        //return query;
+        return nextId;
+        }
+
+    private void loadDoctorData() {
+        model.setRowCount(0);
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            System.out.println("Database connected....");
+            String query = "SELECT * FROM doctor_db";
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("doctor_id"),
+                    rs.getString("name"),
+                    rs.getString("gender"),
+                    rs.getString("specialization"),
+                    rs.getString("qualification"),
+                    rs.getString("experience"),
+                    rs.getString("phone"),
+                    rs.getString("address"),
+                    rs.getString("availability")
+                };
+                model.addRow(row);
+            }
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            JOptionPane.showMessageDialog(this, "Error loading doctor data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void searchDoctor() {
+        String searchTerm = searchField.getText().trim();
+        if (searchTerm.isEmpty()) {
+            loadDoctorData();
+            return;
+        }
+        model.setRowCount(0);
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            String query = "SELECT * FROM doctor_db WHERE doctor_id LIKE '" + searchTerm + "' OR name LIKE '%" + searchTerm + "%'";
+            rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("doctor_id"),
+                    rs.getString("name"),
+                    rs.getString("gender"),
+                    rs.getString("specialization"),
+                    rs.getString("qualification"),
+                    rs.getString("experience"),
+                    rs.getString("phone"),
+                    rs.getString("address"),
+                    rs.getString("availability")
+                };
+                model.addRow(row);
+            }
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    //==================updating the table =====================
+
+    private void updateDoctor(String doctorId, String columnName, Object newValue) {
+        // map displayed column names to actual DB column names
+        String dbCol;
+        switch (columnName) {
+            case "doctor_Id": // never editable
+                return;
+            case "name":
+                dbCol = "name";
+                break;
+            case "gender":
+                dbCol = "gender";
+                break;
+            case "specialization":
+                dbCol = "specialization";
+                break;
+            case "qualification":
+                dbCol = "qualification";
+                break;
+            case "experience":
+                dbCol = "experience";
+                break;
+            case "phone":
+                dbCol = "phone";
+                break;
+            case "address":
+                dbCol = "address";
+                break;
+            case "availability":
+                dbCol = "availability";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Cannot update column: " + columnName, "Update error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+
+        String sql = "UPDATE doctor_db SET " + dbCol + " = '"+newValue+"' WHERE doctor_id = '"+doctorId+"'";
+        JOptionPane.showMessageDialog(this,"error");
+        try (Connection conn = DriverManager.getConnection(url, user, user_password);
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setObject(1, newValue);
+            pst.setString(2, doctorId);
+            int updated = pst.executeUpdate();
+            if (updated > 0) {
+                // reload the table silently (no dialog on each cell edit)
+                loadDoctorData();
+            } else {
+                JOptionPane.showMessageDialog(this, "No record updated (check doctor_id).", "Update", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Failed to update: " + ex.getMessage(), "Update error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+    private void deleteDoctor(String doctorId) {
+        try {
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            String query = "DELETE FROM doctor_db WHERE doctor_id = '" + doctorId + "'";
+            stmt.executeUpdate(query);
+            JOptionPane.showMessageDialog(this, "Doctor deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            loadDoctorData();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            JOptionPane.showMessageDialog(this, "Error deleting doctor: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public static void main(String[] args) {
-        ViewDoctor obj = new ViewDoctor();
-        obj.setSize(850,800);
-        obj.setLocationRelativeTo(null);
-        obj.setVisible(true);
+        SwingUtilities.invokeLater(() -> new ViewDoctor());
     }
 }
