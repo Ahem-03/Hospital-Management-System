@@ -23,7 +23,6 @@ Add and view prescriptions
 🗄️ MySQL Database Integration using JDBC
 
 🛠️ Technologies Used:-
-
 Programming Language: Java
 GUI Framework: Java Swing
 Database: MySQL
