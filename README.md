@@ -30,3 +30,25 @@ Connectivity: JDBC
 
 IDE: Eclipse / IntelliJ IDEA / NetBeans
 
+Hospital-Management-System/
+│
+├── Login_Page.java          # User login screen
+├── Home_Page.java           # Home/Dashboard page
+├── Main_Menu.java           # Main navigation menu
+│
+├── AddPatient.java          # Add new patient module
+├── ViewPatient.java         # View patient records
+│
+├── AddDoctor.java           # Add doctor details
+│
+├── FixAppointment.java      # Appointment scheduling
+│
+├── PrescriptionDetail.java  # Prescription management
+│
+└── README.md                # Project documentation
+
+
+👨‍💻 Author
+
+Ahem Sharma
+Java Developer | Swing | JDBC | MySQL
