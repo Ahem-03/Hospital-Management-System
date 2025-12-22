@@ -85,17 +85,17 @@ public class ViewDoctor extends JFrame {
         btnUpdate.setBackground(new Color(255, 193, 7));
         btnUpdate.setForeground(Color.BLACK);
         btnUpdate.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        leftPanel.add(btnUpdate);
+        //leftPanel.add(btnUpdate);
 
         btnDelete = new JButton("Delete");
-        btnDelete.setBounds(40, 380, 200, 35);
+        btnDelete.setBounds(40, 330, 200, 35);
         btnDelete.setBackground(new Color(244, 67, 54));
         btnDelete.setForeground(Color.WHITE);
         btnDelete.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnDelete);
 
         btnBack = new JButton("Back");
-        btnBack.setBounds(40, 430, 200, 35);
+        btnBack.setBounds(40, 380, 200, 35);
         btnBack.setBackground(new Color(255, 87, 87));
         btnBack.setForeground(Color.WHITE);
         btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
