@@ -9,7 +9,7 @@ public class ViewPatient extends JFrame implements ActionListener{
     JPanel leftPanel, rightPanel;
     JLabel titleLabel, filterLabel;
     JTextField searchField;
-    JButton btnSearch, btnRefresh, btnBack;
+    JButton btnSearch, btnRefresh, btnBack, btnDelete;
     JTable patientTable;
     JScrollPane tableScroll;
     DefaultTableModel model;
@@ -28,7 +28,7 @@ public class ViewPatient extends JFrame implements ActionListener{
     public static ResultSet rs;
 
     public ViewPatient() {
-        setTitle("🏥 View Patient Details");
+        setTitle("🥼 View Patient Details");
         setSize(1250, 820);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
@@ -77,40 +77,48 @@ public class ViewPatient extends JFrame implements ActionListener{
         btnRefresh.setForeground(Color.white);
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnRefresh);
-        btnRefresh.addActionListener( this);
-            btnRefresh.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e ){
-                    loadPatientData();
-                }
-            });  // actionPerformed(ActionEvent e) Invoked when an action occurs.
-
-        btnBack = new JButton("Back");
-        btnBack.setBounds(40, 330, 200, 35);
-        btnBack.setBackground(new Color(255, 87, 87));
-        btnBack.setForeground(Color.white);
-        btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        leftPanel.add(btnBack);
-        btnBack.addActionListener(new ActionListener() {
+        btnRefresh.addActionListener(this);
+        btnRefresh.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e ){
-                 new Main_Menu();
-                  setVisible(true);
-                  setLocationRelativeTo(null);
-                  ViewPatient.this.setVisible(false);
+                loadPatientData();
             }
-        });  // actionPerformed(ActionEvent e) Invoked when an action occurs.
+        });
 
-        btnAdd  = new JButton("Add patient");           
+        btnAdd = new JButton("Add patient");           
         btnAdd.setBounds(40, 280, 200, 35);
         btnAdd.setBackground(new Color(52, 105, 158));
         btnAdd.setForeground(Color.white);
         btnAdd.setFont(new Font("Segoe UI", Font.BOLD, 14));
         leftPanel.add(btnAdd);
         btnAdd.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e){
                 new AddPatient().setVisible(true);
-               ViewPatient.this.setVisible(false);
-        }  
-        });   // this is the action performed method for add patient 
+                ViewPatient.this.setVisible(false);
+            }  
+        });
+
+        btnDelete = new JButton("🗑️ Delete");
+        btnDelete.setBounds(40, 330, 200, 35);
+        btnDelete.setBackground(new Color(220, 53, 69));
+        btnDelete.setForeground(Color.white);
+        btnDelete.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnDelete);
+        btnDelete.addActionListener(this);
+
+        btnBack = new JButton("Back");
+        btnBack.setBounds(40, 380, 200, 35);
+        btnBack.setBackground(new Color(255, 87, 87));
+        btnBack.setForeground(Color.white);
+        btnBack.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        leftPanel.add(btnBack);
+        btnBack.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e ){
+                new Main_Menu();
+                setVisible(true);
+                setLocationRelativeTo(null);
+                ViewPatient.this.setVisible(false);
+            }
+        });
 
         // ==== RIGHT PANEL ====
         rightPanel = new JPanel();
@@ -127,7 +135,7 @@ public class ViewPatient extends JFrame implements ActionListener{
 
         //table initializing with Ward Number and Room Number columns
         String[] column = {"Patient ID", "Name", "Age", "Gender", "Disease", "Contact", "Ward No.", "Room No."};
-        model = new DefaultTableModel(column,0);
+        model = new DefaultTableModel(column, 0);
         
         // creating a table 
         patientTable = new JTable(model);
@@ -141,83 +149,79 @@ public class ViewPatient extends JFrame implements ActionListener{
         tableScroll.setBounds(20, 70, 930, 700);
         rightPanel.add(tableScroll);
 
-          // Load data from database
+        // Load data from database
         loadPatientData();
-
-        
     }
-    //=========== this will auto generate the id ============
 
+    //=========== this will auto generate the id ============
     public static String generateNextPatientId(JTextField txtPatientId){
         String nextId = "P105";
         String query = "select patient_id from Patients ORDER BY patient_id DESC LIMIT 1";
         try {
             con = DriverManager.getConnection(url, user, user_password);
-        stmt = con.createStatement();
-        System.out.println("database is connected....");
-        rs = stmt.executeQuery(query);
+            stmt = con.createStatement();
+            System.out.println("database is connected....");
+            rs = stmt.executeQuery(query);
 
-        if(rs.next()){
-            String lastId = rs.getString("patient_id");
-            // Extract numeric part from "P101" -> 101
+            if(rs.next()){
+                String lastId = rs.getString("patient_id");
+                // Extract numeric part from "P101" -> 101
                 int numericPart = Integer.parseInt(lastId.substring(1));
                 // Increment and format
                 nextId = "P" + (numericPart + 1);
-        }
+            }
         } catch (Exception e) {
             System.out.println(" patient id problem"+ e);
         }
-        //return query;
         return nextId;
-        }
-
-    // this method will auro matically shows the all patients 
-   public void loadPatientData(){
-
-    model.setRowCount(0);
-    try{
-        con = DriverManager.getConnection(url, user, user_password);
-        stmt = con.createStatement();
-        System.out.println("database is connected....");
-        String query  = "select * from patients";
-        rs = stmt.executeQuery(query);
-        
-        while (rs.next()) {
-            Object[] row ={
-                rs.getString("patient_id"),
-                rs.getString("name"),
-                rs.getString("age"),
-                rs.getString("gender"),
-                rs.getString("disease"),
-                rs.getString("contact"),
-                rs.getString("ward_number"),
-                rs.getString("room_number")
-            };
-            model.addRow(row);
-        }
-    }catch(Exception ee){
-        System.out.println("problem"+ee);
     }
-   }
 
-   // ========== form here we are adding the button event =========
-   public void actionPerformed(ActionEvent e){   
+    // this method will automatically show all patients 
+    public void loadPatientData(){
+        model.setRowCount(0);
+        try{
+            con = DriverManager.getConnection(url, user, user_password);
+            stmt = con.createStatement();
+            System.out.println("database is connected....");
+            String query = "select * from patients";
+            rs = stmt.executeQuery(query);
+            
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("patient_id"),
+                    rs.getString("name"),
+                    rs.getString("age"),
+                    rs.getString("gender"),
+                    rs.getString("disease"),
+                    rs.getString("contact"),
+                    rs.getString("ward_number"),
+                    rs.getString("room_number")
+                };
+                model.addRow(row);
+            }
+        }catch(Exception ee){
+            System.out.println("problem"+ee);
+        }
+    }
+
+    // ========== from here we are adding the button event =========
+    public void actionPerformed(ActionEvent e){   
 
         // =================== searching button ============ 
-         if (e.getSource()==btnSearch) {
-             model.setRowCount(0);
+        if (e.getSource() == btnSearch) {
+            model.setRowCount(0);
             String id = searchField.getText();
             if (id.isEmpty()) {
-                JOptionPane.showMessageDialog(this ,"Text Field can not be Empty");
+                JOptionPane.showMessageDialog(this, "Text Field can not be Empty");
                 loadPatientData();
                 return;
             } 
             try {
-                String query_2 = "select * from patients where patient_id = '"+id+"' or name = '"+id+"'";
+                String query_2 = "select * from patients where patient_id = '" + id + "' or name = '" + id + "'";
                 System.out.println("query is running...");
                 rs = stmt.executeQuery(query_2);
                 if (rs.next()) {
-                    Object[] row={
+                    Object[] row = {
                         rs.getString("patient_id"),
                         rs.getString("name"),
                         rs.getString("age"),
@@ -230,16 +234,49 @@ public class ViewPatient extends JFrame implements ActionListener{
                     model.addRow(row);
                 }
             } catch (Exception ee) {
-                System.out.println("Error in search button : ");
+                System.out.println("Error in search button : " + ee);
             }
         }
-   }
 
+        // =================== delete button ============
+        if (e.getSource() == btnDelete) {
+            int selectedRow = patientTable.getSelectedRow();
+            
+            // Check if a row is selected
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this, "Please select a patient to delete!", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-   // ====================================== AddPatient record ===============================================//
+            // Get the patient ID from the selected row
+            String patientId = (String) model.getValueAt(selectedRow, 0);
+            
+            // Confirm deletion
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Are you sure you want to delete patient: " + patientId + "?", 
+                "Confirm Delete", 
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
 
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    con = DriverManager.getConnection(url, user, user_password);
+                    stmt = con.createStatement();
+                    
+                    String deleteQuery = "delete from patients where patient_id = '" + patientId + "'";
+                    stmt.executeUpdate(deleteQuery);
+                    
+                    JOptionPane.showMessageDialog(this, "✅ Patient deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    loadPatientData(); // Refresh the table
+                    
+                } catch (Exception ee) {
+                    JOptionPane.showMessageDialog(this, "Error deleting patient: " + ee.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    System.out.println("Delete button error: " + ee);
+                }
+            }
+        }
+    }
 
-   
     public static void main(String[] args) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -248,6 +285,6 @@ public class ViewPatient extends JFrame implements ActionListener{
         } catch (Exception e) {
             System.out.println("problem"+ e);
         }
-        SwingUtilities.invokeLater(()-> new ViewPatient());
+        SwingUtilities.invokeLater(() -> new ViewPatient());
     }
 }
